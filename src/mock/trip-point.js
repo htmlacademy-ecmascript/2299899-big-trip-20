@@ -1,7 +1,6 @@
 import { getRandomArrayElement, getRandomInt } from '../utils.js';
 import { TRIP_POINTS_TYPES } from '../const.js';
 
-const MOCK_TRIP_POINTS_AMOUNT = 5;
 const MOCK_MIN_MINUTES = 15;
 const MOCK_MAX_MINUTES = 1500;
 const MOCK_MIN_PRICE = 10;
@@ -102,14 +101,4 @@ const generateMockTripPoint = () => ({
   isFavorite: true,
 });
 
-const generateMockData = (amount) => {
-  const mockData = [];
-  for (let i = 1; i <= amount; i++) {
-    mockData.push(generateMockTripPoint());
-  }
-  return mockData;
-};
-
-const mockTripPoints = generateMockData(MOCK_TRIP_POINTS_AMOUNT);
-
-export { mockTripPoints };
+export { generateMockTripPoint };
