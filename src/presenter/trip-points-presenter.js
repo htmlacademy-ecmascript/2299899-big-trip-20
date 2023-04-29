@@ -19,7 +19,7 @@ export default class TripPointsPresenter {
     render(this.pointsList, this.container);
     render(new PointCreationView(), this.pointsList.getElement());
     render(new PointEditingView(), this.pointsList.getElement());
-    for (let i = 1; i <= this.tripPoints.length; i++) {
+    for (let i = 0; i < this.tripPoints.length; i++) {
       render(
         new PointElementView({ tripPoint: this.tripPoints[i] }),
         this.pointsList.getElement()

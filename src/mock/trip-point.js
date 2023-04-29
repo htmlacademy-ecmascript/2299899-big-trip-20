@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { getRandomArrayElement, getRandomInt } from '../utils.js';
 import { TRIP_POINTS_TYPES } from '../const.js';
 
@@ -38,13 +39,13 @@ const MOCK_OFFERS = [
   },
   {
     type: getRandomArrayElement(TRIP_POINTS_TYPES),
-    name: 'Switch to comfort class',
+    name: 'Comfort class',
     price: 100,
   },
   {
     type: getRandomArrayElement(TRIP_POINTS_TYPES),
     name: 'Add meal',
-    price: 15
+    price: 15,
   },
   {
     type: getRandomArrayElement(TRIP_POINTS_TYPES),
@@ -66,9 +67,9 @@ const generateDescription = () => {
 };
 
 const createTimeGenerator = () => {
-  const lastGeneratedTime = new Date(Date.now());
-  return (hours) => {
-    lastGeneratedTime.setMinutes(lastGeneratedTime.getMinutes() + hours);
+  let lastGeneratedTime = dayjs();
+  return (minutes) => {
+    lastGeneratedTime = lastGeneratedTime.add(minutes, 'm');
     return lastGeneratedTime;
   };
 };
@@ -92,13 +93,11 @@ const generateMockTripPoint = () => ({
     description: generateDescription(),
     photos: generateMockPhotos(),
   },
-  timeStart: new Date(generateTime(0)),
-  timeFinish: new Date(
-    generateTime(getRandomInt(MOCK_MAX_MINUTES, MOCK_MIN_MINUTES))
-  ),
+  timeStart: generateTime(0),
+  timeFinish: generateTime(getRandomInt(MOCK_MAX_MINUTES, MOCK_MIN_MINUTES)),
   price: getRandomInt(MOCK_MAX_PRICE, MOCK_MIN_PRICE),
   offers: MOCK_OFFERS.slice(getRandomInt(MOCK_OFFERS.length)),
-  isFavorite: true,
+  isFavorite: getRandomInt(1),
 });
 
 export { generateMockTripPoint };
