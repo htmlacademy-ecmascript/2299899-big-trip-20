@@ -6,10 +6,7 @@ import { DATE_FORMAT, TIME_FORMAT, TIME_DELTA_FORMAT } from '../const.js';
 
 dayjs.extend(duration);
 
-const createPointElementTemplate = (tripPoint) => {
-  const favoriteClassName = tripPoint.isFavorite
-    ? '  event__favorite-btn--active'
-    : '';
+const getTimeDelta = (tripPoint) => {
   const timeDuration = dayjs.duration(
     tripPoint.timeFinish.diff(tripPoint.timeStart)
   );
@@ -19,7 +16,27 @@ const createPointElementTemplate = (tripPoint) => {
       timeDelta = timeDelta.slice(4);
     }
   }
-  let template = `
+  return timeDelta;
+};
+
+const createOffersListTemplate = (tripPoint) =>
+  tripPoint.offers.map(
+    (offer) => `
+    <li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </li>
+  `
+  ).join('');
+
+const createPointElementTemplate = (tripPoint) => {
+  const favoriteClassName = tripPoint.isFavorite
+    ? '  event__favorite-btn--active'
+    : '';
+  const timeDelta = getTimeDelta(tripPoint);
+  const offersListTemplate = createOffersListTemplate(tripPoint);
+  return `
     <li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="${tripPoint.timeStart}">
@@ -52,17 +69,7 @@ const createPointElementTemplate = (tripPoint) => {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-        `;
-  for (let i = 0; i < tripPoint.offers.length; i++) {
-    template += `
-    <li class="event__offer">
-      <span class="event__offer-title">${tripPoint.offers[i].name}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${tripPoint.offers[i].price}</span>
-    </li>
-    `;
-  }
-  template += `
+          ${offersListTemplate}
         </ul>
         <button class="event__favorite-btn${favoriteClassName}" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -76,7 +83,6 @@ const createPointElementTemplate = (tripPoint) => {
       </div>
     </li>
   `;
-  return template;
 };
 
 export default class PointElementView {

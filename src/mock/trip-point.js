@@ -33,23 +33,23 @@ const MOCK_DESCRIPTIONS = [
 const MOCK_PHOTOS_MAX_AMOUNT = 5;
 const MOCK_OFFERS = [
   {
-    type: getRandomArrayElement(TRIP_POINTS_TYPES),
-    name: 'Add luggage',
+    type: 'luggage',
+    title: 'Add luggage',
     price: 30,
   },
   {
-    type: getRandomArrayElement(TRIP_POINTS_TYPES),
-    name: 'Comfort class',
+    type: 'comfort',
+    title: 'Comfort class',
     price: 100,
   },
   {
-    type: getRandomArrayElement(TRIP_POINTS_TYPES),
-    name: 'Add meal',
+    type: 'meal',
+    title: 'Add meal',
     price: 15,
   },
   {
-    type: getRandomArrayElement(TRIP_POINTS_TYPES),
-    name: 'Choose seats',
+    type: 'seats',
+    title: 'Choose seats',
     price: 5,
   },
 ];
@@ -100,4 +100,4 @@ const generateMockTripPoint = () => ({
   isFavorite: getRandomInt(1),
 });
 
-export { generateMockTripPoint };
+export { generateMockTripPoint, MOCK_CITIES, MOCK_OFFERS };
