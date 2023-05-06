@@ -20,15 +20,17 @@ const getTimeDelta = (tripPoint) => {
 };
 
 const createOffersListTemplate = (tripPoint) =>
-  tripPoint.offers.map(
-    (offer) => `
+  tripPoint.offers
+    .map(
+      (offer) => `
     <li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${offer.price}</span>
     </li>
   `
-  ).join('');
+    )
+    .join('');
 
 const createPointElementTemplate = (tripPoint) => {
   const favoriteClassName = tripPoint.isFavorite
@@ -86,12 +88,23 @@ const createPointElementTemplate = (tripPoint) => {
 };
 
 export default class PointElementView extends AbstractView {
-  constructor({ tripPoint }) {
+  #tripPoint = null;
+  #handleEditClick = null;
+  constructor({ tripPoint, onEditClick }) {
     super();
-    this.tripPoint = tripPoint;
+    this.#tripPoint = tripPoint;
+    this.#handleEditClick = onEditClick;
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
-    return createPointElementTemplate(this.tripPoint);
+    return createPointElementTemplate(this.#tripPoint);
   }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }

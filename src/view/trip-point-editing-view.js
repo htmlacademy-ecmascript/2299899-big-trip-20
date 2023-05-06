@@ -162,12 +162,26 @@ const createPointEditingTemplate = (tripPoint) => {
 };
 
 export default class PointEditingView extends AbstractView {
-  constructor({ tripPoint }) {
+  #tripPoint = null;
+  #handleFormSubmit = null;
+  constructor({ tripPoint, onFormSubmit }) {
     super();
-    this.tripPoint = tripPoint;
+    this.#tripPoint = tripPoint;
+    this.#handleFormSubmit = onFormSubmit;
+    this.element
+      .querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#formSubmitHandler);
   }
 
   get template() {
-    return createPointEditingTemplate(this.tripPoint);
+    return createPointEditingTemplate(this.#tripPoint);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }
