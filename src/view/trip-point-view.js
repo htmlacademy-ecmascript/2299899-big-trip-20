@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { createElement } from '../render.js';
 import { humanizeDate } from '../utils.js';
 import { DATE_FORMAT, TIME_FORMAT, TIME_DELTA_FORMAT } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 dayjs.extend(duration);
 
@@ -85,23 +85,13 @@ const createPointElementTemplate = (tripPoint) => {
   `;
 };
 
-export default class PointElementView {
+export default class PointElementView extends AbstractView {
   constructor({ tripPoint }) {
+    super();
     this.tripPoint = tripPoint;
   }
 
-  getTemplate() {
+  get template() {
     return createPointElementTemplate(this.tripPoint);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

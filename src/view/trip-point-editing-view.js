@@ -1,7 +1,7 @@
 import { DATETIME_FORM_FORMAT, TRIP_POINTS_TYPES } from '../const.js';
 import { MOCK_CITIES, MOCK_OFFERS } from '../mock/trip-point.js';
-import { createElement } from '../render.js';
 import { humanizeDate } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createEventTypeListTemplate = (tripPoint) =>
   TRIP_POINTS_TYPES.map((eventType) => {
@@ -161,23 +161,13 @@ const createPointEditingTemplate = (tripPoint) => {
   `;
 };
 
-export default class PointEditingView {
+export default class PointEditingView extends AbstractView {
   constructor({ tripPoint }) {
+    super();
     this.tripPoint = tripPoint;
   }
 
-  getTemplate() {
+  get template() {
     return createPointEditingTemplate(this.tripPoint);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

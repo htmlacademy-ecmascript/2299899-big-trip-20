@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import { TRIP_POINTS_TYPES, DATETIME_FORM_FORMAT } from '../const.js';
 import { MOCK_CITIES, MOCK_OFFERS } from '../mock/trip-point.js';
-import { createElement } from '../render.js';
 import { humanizeDate } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createEventTypeListTemplate = (tripPoint) =>
   TRIP_POINTS_TYPES.map((eventType) => {
@@ -150,23 +150,13 @@ const createPointCreationTemplate = (tripPoint) => {
   `;
 };
 
-export default class PointCreationView {
+export default class PointCreationView extends AbstractView {
   constructor({ tripPoint }) {
+    super();
     this.tripPoint = tripPoint;
   }
 
-  getTemplate() {
+  get template() {
     return createPointCreationTemplate(this.tripPoint);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
