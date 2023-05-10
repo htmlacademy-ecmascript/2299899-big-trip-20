@@ -67,7 +67,7 @@ const generateDescription = () => {
 };
 
 const createTimeGenerator = () => {
-  let lastGeneratedTime = dayjs();
+  let lastGeneratedTime = dayjs().subtract(getRandomInt(3), 'day');
   return (minutes) => {
     lastGeneratedTime = lastGeneratedTime.add(minutes, 'm');
     return lastGeneratedTime;

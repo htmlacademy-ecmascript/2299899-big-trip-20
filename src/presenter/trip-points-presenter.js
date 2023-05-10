@@ -4,6 +4,7 @@ import PointsListView from '../view/trip-point-list-view.js';
 import PointEditingView from '../view/trip-point-editing-view.js';
 import PointElementView from '../view/trip-point-view.js';
 import { render, replace } from '../framework/render.js';
+import { FilterTypeMessages } from '../const.js';
 
 export default class TripPointsPresenter {
   #container = null;
@@ -18,6 +19,25 @@ export default class TripPointsPresenter {
 
   init() {
     this.#tripPoints = [...this.#tripPointsModel.tripPoints];
+    const currentFilter = document.querySelector(
+      'input[name="trip-filter"]:checked'
+    );
+    const currentFilterPointsAmount = currentFilter.dataset.tripPointsAmount;
+    if (currentFilterPointsAmount !== '0') {
+      this.#renderTripPointsList();
+    } else {
+      this.#renderNoPointsMessage(currentFilter.value.toUpperCase());
+    }
+  }
+
+  #renderNoPointsMessage(key) {
+    const noPointMessageElement = document.createElement('p');
+    noPointMessageElement.textContent = FilterTypeMessages[key];
+    noPointMessageElement.classList.add('trip-events__msg');
+    document.querySelector('.trip-events').appendChild(noPointMessageElement);
+  }
+
+  #renderTripPointsList() {
     render(new SortView(), this.#container);
     render(this.#pointsList, this.#container);
     for (let i = 0; i < this.#tripPoints.length; i++) {
