@@ -1,6 +1,6 @@
 import { DATETIME_FORM_FORMAT, TRIP_POINTS_TYPES } from '../const.js';
 import { MOCK_CITIES, MOCK_OFFERS } from '../mock/trip-point.js';
-import { humanizeDate } from '../utils.js';
+import { humanizeDate } from '../utils/utils.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createEventTypeListTemplate = (tripPoint) =>

@@ -1,5 +1,5 @@
 import { generateMockTripPoint } from '../mock/trip-point.js';
-import { getRandomInt } from '../utils.js';
+import { getRandomInt } from '../utils/utils.js';
 
 const MOCK_TRIP_POINTS_MAX_AMOUNT = 7;
 

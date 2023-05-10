@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { getRandomArrayElement, getRandomInt } from '../utils.js';
+import { getRandomArrayElement, getRandomInt } from '../utils/utils.js';
 import { TRIP_POINTS_TYPES } from '../const.js';
 
 const MOCK_MIN_MINUTES = 15;
