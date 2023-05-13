@@ -54,6 +54,7 @@ export default class PointsBoardPresenter {
     const tripPointPresenter = new TripPointPresenter({
       container: tripPointsContainer,
       onDataChange: this.#handleTripPointChange,
+      onModeChange: this.#handleModeChange,
     });
     tripPointPresenter.init(tripPoint);
     this.#tripPointsPresenters.set(tripPoint.id, tripPointPresenter);
@@ -75,5 +76,9 @@ export default class PointsBoardPresenter {
   #handleTripPointChange = (updatedTripPoint) => {
     this.#tripPoints = updateItem(this.#tripPoints, updatedTripPoint);
     this.#tripPointsPresenters.get(updatedTripPoint.id).init(updatedTripPoint);
+  };
+
+  #handleModeChange = () => {
+    this.#tripPointsPresenters.forEach((presenter) => presenter.resetView());
   };
 }

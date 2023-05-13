@@ -2,16 +2,24 @@ import { render, replace, remove } from '../framework/render.js';
 import PointEditingView from '../view/trip-point-editing-view.js';
 import PointElementView from '../view/trip-point-view.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class TripPointPresenter {
   #container = null;
   #tripPoint = null;
   #tripPointComponent = null;
   #tripPointEditComponent = null;
   #handleDataChange = null;
+  #handleModeChange = null;
+  #mode = Mode.DEFAULT;
 
-  constructor({ container, onDataChange }) {
+  constructor({ container, onDataChange, onModeChange }) {
     this.#container = container;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(tripPoint) {
@@ -37,10 +45,10 @@ export default class TripPointPresenter {
       return;
     }
 
-    if (this.#container.element.contains(prevTripPointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#tripPointComponent, prevTripPointComponent);
     }
-    if (this.#container.element.contains(prevTripPointEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#tripPointComponent, prevTripPointEditComponent);
     }
     remove(prevTripPointComponent);
@@ -50,6 +58,12 @@ export default class TripPointPresenter {
   destroy() {
     remove(this.#tripPointComponent);
     remove(this.#tripPointEditComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
   }
 
   #escKeyDownHandler = (evt) => {
@@ -62,10 +76,15 @@ export default class TripPointPresenter {
 
   #replacePointToForm() {
     replace(this.#tripPointEditComponent, this.#tripPointComponent);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToPoint() {
     replace(this.#tripPointComponent, this.#tripPointEditComponent);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #handleEditClick = () => {
