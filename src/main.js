@@ -1,6 +1,6 @@
 import FiltersView from './view/filters-view.js';
 import { render } from './framework/render.js';
-import TripPointsPresenter from './presenter/trip-points-presenter.js';
+import PointsBoardPresenter from './presenter/points-board-presenter.js';
 import TripPointsModel from './model/trip-points-model.js';
 import { generateFilter } from './mock/filter.js';
 import { generateMockTripPoint } from './mock/trip-point.js';
@@ -16,11 +16,11 @@ const mockTripPoints = Array.from(
 const filtersElement = document.querySelector('.trip-controls__filters');
 const tripPointsElement = document.querySelector('.trip-events');
 const tripPointsModel = new TripPointsModel({ tripPoints: mockTripPoints });
-const tripPointsPresenter = new TripPointsPresenter({
+const pointsBoardPresenter = new PointsBoardPresenter({
   container: tripPointsElement,
   tripPointsModel,
 });
 const filters = generateFilter(tripPointsModel.tripPoints);
 
 render(new FiltersView({ filters }), filtersElement);
-tripPointsPresenter.init();
+pointsBoardPresenter.init();
