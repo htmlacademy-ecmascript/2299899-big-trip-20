@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { getRandomArrayElement, getRandomInt } from '../utils/utils.js';
+import { getRandomArrayElement, getRandomInt } from '../utils/common.js';
 import { TRIP_POINTS_TYPES } from '../const.js';
 
 const MOCK_MIN_MINUTES = 15;
@@ -74,7 +74,16 @@ const createTimeGenerator = () => {
   };
 };
 
+const createIdGenerator = () => {
+  let lastGeneratedId = 0;
+  return () => {
+    lastGeneratedId += 1;
+    return lastGeneratedId;
+  };
+};
+
 const generateTime = createTimeGenerator();
+const generateId = createIdGenerator();
 
 const generateMockPhotos = () => {
   const array = [];
@@ -87,6 +96,7 @@ const generateMockPhotos = () => {
 };
 
 const generateMockTripPoint = () => ({
+  id: generateId(),
   type: getRandomArrayElement(TRIP_POINTS_TYPES),
   destination: {
     city: getRandomArrayElement(MOCK_CITIES),

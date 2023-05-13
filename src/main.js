@@ -4,7 +4,7 @@ import PointsBoardPresenter from './presenter/points-board-presenter.js';
 import TripPointsModel from './model/trip-points-model.js';
 import { generateFilter } from './mock/filter.js';
 import { generateMockTripPoint } from './mock/trip-point.js';
-import { getRandomInt } from './utils/utils.js';
+import { getRandomInt } from './utils/common.js';
 
 const MOCK_TRIP_POINTS_MAX_AMOUNT = 7;
 

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { humanizeDate } from '../utils/utils.js';
+import { humanizeDate } from '../utils/common.js';
 import { DATE_FORMAT, TIME_FORMAT, TIME_DELTA_FORMAT } from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
@@ -90,13 +90,19 @@ const createPointElementTemplate = (tripPoint) => {
 export default class PointElementView extends AbstractView {
   #tripPoint = null;
   #handleEditClick = null;
-  constructor({ tripPoint, onEditClick }) {
+  #handleFavoriteClick = null;
+
+  constructor({ tripPoint, onEditClick, onFavoriteClick }) {
     super();
     this.#tripPoint = tripPoint;
     this.#handleEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
     this.element
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
+    this.element
+      .querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandler);
   }
 
   get template() {
@@ -106,5 +112,10 @@ export default class PointElementView extends AbstractView {
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 }
