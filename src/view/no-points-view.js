@@ -11,10 +11,6 @@ const createNoPointsTemplate = (activeFilter) => {
 export default class NoPointsView extends AbstractView {
   #activeFilter = null;
 
-  constructor() {
-    super();
-  }
-
   get template() {
     return createNoPointsTemplate(this.#activeFilter);
   }

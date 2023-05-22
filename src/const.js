@@ -21,6 +21,14 @@ const FilterType = {
   PAST: 'past',
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
+
 const FilterTypeMessages = {
   EVERYTHING: 'Click New Event to create your first point',
   FUTURE: 'There are no future events now',
@@ -35,5 +43,6 @@ export {
   TIME_DELTA_FORMAT,
   DATETIME_FORM_FORMAT,
   FilterType,
+  SortType,
   FilterTypeMessages,
 };
