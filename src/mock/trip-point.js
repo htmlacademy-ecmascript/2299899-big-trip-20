@@ -36,21 +36,32 @@ const MOCK_OFFERS = [
     type: 'luggage',
     title: 'Add luggage',
     price: 30,
+    tripPointsTypes: ['Bus', 'Train', 'Ship', 'Drive', 'Flight'],
   },
   {
     type: 'comfort',
     title: 'Comfort class',
     price: 100,
+    tripPointsTypes: ['Train', 'Ship', 'Flight'],
   },
   {
     type: 'meal',
     title: 'Add meal',
     price: 15,
+    tripPointsTypes: [
+      'Train',
+      'Ship',
+      'Flight',
+      'Check-in',
+      'Sightseeing',
+      'Restaurant',
+    ],
   },
   {
     type: 'seats',
     title: 'Choose seats',
     price: 5,
+    tripPointsTypes: ['Bus', 'Train', 'Ship', 'Flight'],
   },
 ];
 
@@ -95,19 +106,26 @@ const generateMockPhotos = () => {
   return array;
 };
 
-const generateMockTripPoint = () => ({
-  id: generateId(),
-  type: getRandomArrayElement(TRIP_POINTS_TYPES),
-  destination: {
-    city: getRandomArrayElement(MOCK_CITIES),
-    description: generateDescription(),
-    photos: generateMockPhotos(),
-  },
-  timeStart: generateTime(0).toDate(),
-  timeFinish: generateTime(getRandomInt(MOCK_MAX_MINUTES, MOCK_MIN_MINUTES)).toDate(),
-  price: getRandomInt(MOCK_MAX_PRICE, MOCK_MIN_PRICE),
-  offers: MOCK_OFFERS.slice(getRandomInt(MOCK_OFFERS.length)),
-  isFavorite: getRandomInt(1),
-});
+const generateMockTripPoint = () => {
+  const mockTripPoint = {
+    id: generateId(),
+    type: getRandomArrayElement(TRIP_POINTS_TYPES),
+    destination: {
+      city: getRandomArrayElement(MOCK_CITIES),
+      description: generateDescription(),
+      photos: generateMockPhotos(),
+    },
+    timeStart: generateTime(0).toDate(),
+    timeFinish: generateTime(
+      getRandomInt(MOCK_MAX_MINUTES, MOCK_MIN_MINUTES)
+    ).toDate(),
+    price: getRandomInt(MOCK_MAX_PRICE, MOCK_MIN_PRICE),
+    isFavorite: getRandomInt(1),
+  };
+  mockTripPoint.offers = MOCK_OFFERS.filter((offer) =>
+    offer.tripPointsTypes.includes(mockTripPoint.type)
+  );
+  return mockTripPoint;
+};
 
 export { generateMockTripPoint, MOCK_CITIES, MOCK_OFFERS };

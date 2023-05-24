@@ -28,25 +28,27 @@ const createDestinationListTemplate = () =>
 
 const createOffersListTemplate = (tripPoint) =>
   MOCK_OFFERS.map((offer) => {
-    const checked = tripPoint.offers.some(
-      (element) => element.type === offer.type
-    )
-      ? 'checked'
-      : '';
-    return `
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden"
-      id="event-offer-${offer.type.toLowerCase()}-2"
-      type="checkbox"
-      name="event-offer-${offer.type.toLowerCase()}"
-      ${checked}>
-      <label class="event__offer-label" for="event-offer-${offer.type.toLowerCase()}-2">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>
-    `;
+    if (offer.tripPointsTypes.includes(tripPoint.type)) {
+      const checked = tripPoint.offers.some(
+        (element) => element.type === offer.type
+      )
+        ? 'checked'
+        : '';
+      return `
+      <div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden"
+        id="event-offer-${offer.type.toLowerCase()}-2"
+        type="checkbox"
+        name="event-offer-${offer.type.toLowerCase()}"
+        ${checked}>
+        <label class="event__offer-label" for="event-offer-${offer.type.toLowerCase()}-2">
+          <span class="event__offer-title">${offer.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>
+      `;
+    }
   }).join('');
 
 const createPhotoListTemplate = (tripPoint) =>
@@ -199,7 +201,10 @@ export default class PointEditingView extends AbstractStatefulView {
   #chooseTripPointTypeHandler = (evt) => {
     evt.preventDefault();
     const eventType = evt.target.innerText;
-    this.updateElement({ type: eventType });
+    const offers = MOCK_OFFERS.filter((offer) =>
+      offer.tripPointsTypes.includes(eventType)
+    );
+    this.updateElement({ type: eventType, offers });
   };
 
   static parseTripPointToState(tripPoint) {
