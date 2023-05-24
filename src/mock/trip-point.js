@@ -125,6 +125,9 @@ const generateMockTripPoint = () => {
   mockTripPoint.offers = MOCK_OFFERS.filter((offer) =>
     offer.tripPointsTypes.includes(mockTripPoint.type)
   );
+  mockTripPoint.offers = mockTripPoint.offers.slice(
+    getRandomInt(mockTripPoint.offers.length)
+  );
   return mockTripPoint;
 };
 

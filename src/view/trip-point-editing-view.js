@@ -40,6 +40,7 @@ const createOffersListTemplate = (tripPoint) =>
         id="event-offer-${offer.type.toLowerCase()}-2"
         type="checkbox"
         name="event-offer-${offer.type.toLowerCase()}"
+        value="${offer.type.toLowerCase()}"
         ${checked}>
         <label class="event__offer-label" for="event-offer-${offer.type.toLowerCase()}-2">
           <span class="event__offer-title">${offer.title}</span>
@@ -193,6 +194,9 @@ export default class PointEditingView extends AbstractStatefulView {
     this.element
       .querySelector('.event__type-group')
       .addEventListener('click', this.#chooseTripPointTypeHandler);
+    this.element
+      .querySelector('.event__available-offers')
+      .addEventListener('change', this.#chooseOfferHandler);
   }
 
   #formSubmitHandler = (evt) => {
@@ -203,10 +207,25 @@ export default class PointEditingView extends AbstractStatefulView {
   #chooseTripPointTypeHandler = (evt) => {
     evt.preventDefault();
     const eventType = evt.target.innerText;
-    const offers = MOCK_OFFERS.filter((offer) =>
-      offer.tripPointsTypes.includes(eventType)
-    );
+    const offers = [];
     this.updateElement({ type: eventType, offers });
+  };
+
+  #chooseOfferHandler = (evt) => {
+    evt.preventDefault();
+    const offerType = evt.target.value;
+    const isChecked = evt.target.checked;
+    if (isChecked) {
+      this._state.offers.push(
+        MOCK_OFFERS.filter((offer) => offer.type === offerType)[0]
+      );
+    } else {
+      const element = this._state.offers.filter(
+        (offer) => offer.type === offerType
+      )[0];
+      const index = this._state.offers.indexOf(element);
+      this._state.offers.splice(index, 1);
+    }
   };
 
   static parseTripPointToState(tripPoint) {
