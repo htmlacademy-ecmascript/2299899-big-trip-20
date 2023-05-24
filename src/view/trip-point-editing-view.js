@@ -163,11 +163,9 @@ const createPointEditingTemplate = (tripPoint) => {
 
 export default class PointEditingView extends AbstractStatefulView {
   #handleFormSubmit = null;
-  // #tripPoint = null;
 
   constructor({ tripPoint, onFormSubmit }) {
     super();
-    // this.#tripPoint = tripPoint;
     this._setState(PointEditingView.parseTripPointToState(tripPoint));
     this.#handleFormSubmit = onFormSubmit;
     this._restoreHandlers();
@@ -196,7 +194,6 @@ export default class PointEditingView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(PointEditingView.parseStateToTripPoint(this._state));
-    // this.#handleFormSubmit(this.#tripPoint);
   };
 
   #chooseTripPointTypeHandler = (evt) => {

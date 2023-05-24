@@ -49,7 +49,7 @@ export default class TripPointPresenter {
       replace(this.#tripPointComponent, prevTripPointComponent);
     }
     if (this.#mode === Mode.EDITING) {
-      replace(this.#tripPointComponent, prevTripPointEditComponent);
+      replace(this.#tripPointEditComponent, prevTripPointEditComponent);
     }
     remove(prevTripPointComponent);
     remove(prevTripPointEditComponent);
