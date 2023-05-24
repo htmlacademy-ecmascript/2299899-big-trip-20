@@ -35,6 +35,7 @@ export default class TripPointPresenter {
     this.#tripPointEditComponent = new PointEditingView({
       tripPoint: this.#tripPoint,
       onFormSubmit: this.#handleFormSubmit,
+      onFormClose: this.#handleFormClose,
     });
 
     if (
@@ -96,6 +97,10 @@ export default class TripPointPresenter {
   #handleFormSubmit = (tripPoint) => {
     this.#handleDataChange({ ...tripPoint });
     this.#replaceFormToPoint();
+  };
+
+  #handleFormClose = () => {
+    this.resetView();
   };
 
   #handleFavoriteClick = () => {
