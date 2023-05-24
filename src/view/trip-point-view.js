@@ -8,7 +8,7 @@ dayjs.extend(duration);
 
 const getTimeDelta = (tripPoint) => {
   const timeDuration = dayjs.duration(
-    tripPoint.timeFinish.diff(tripPoint.timeStart)
+    dayjs(tripPoint.timeFinish).diff(tripPoint.timeStart)
   );
   let timeDelta = timeDuration.format(TIME_DELTA_FORMAT);
   for (let i = 1; i < 3; i++) {
