@@ -1,5 +1,10 @@
 import { DATETIME_FORM_FORMAT, TRIP_POINTS_TYPES } from '../const.js';
-import { MOCK_CITIES, MOCK_OFFERS } from '../mock/trip-point.js';
+import {
+  MOCK_CITIES,
+  MOCK_OFFERS,
+  generateDescription,
+  generateMockPhotos,
+} from '../mock/trip-point.js';
 import { humanizeDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
@@ -197,6 +202,9 @@ export default class PointEditingView extends AbstractStatefulView {
     this.element
       .querySelector('.event__available-offers')
       .addEventListener('change', this.#chooseOfferHandler);
+    this.element
+      .querySelector('.event__input--destination')
+      .addEventListener('input', this.#chooseCityHandler);
   }
 
   #formSubmitHandler = (evt) => {
@@ -225,6 +233,19 @@ export default class PointEditingView extends AbstractStatefulView {
       )[0];
       const index = this._state.offers.indexOf(element);
       this._state.offers.splice(index, 1);
+    }
+  };
+
+  #chooseCityHandler = (evt) => {
+    evt.preventDefault();
+    const inputCity = evt.target.value;
+    if (MOCK_CITIES.includes(inputCity)) {
+      const destination = {
+        city: evt.target.value,
+        description: generateDescription(),
+        photos: generateMockPhotos(),
+      };
+      this.updateElement({ destination });
     }
   };
 
