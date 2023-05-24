@@ -1,7 +1,7 @@
 import { DATETIME_FORM_FORMAT, TRIP_POINTS_TYPES } from '../const.js';
 import { MOCK_CITIES, MOCK_OFFERS } from '../mock/trip-point.js';
 import { humanizeDate } from '../utils/common.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 const createEventTypeListTemplate = (tripPoint) =>
   TRIP_POINTS_TYPES.map((eventType) => {
@@ -12,8 +12,8 @@ const createEventTypeListTemplate = (tripPoint) =>
         class="event__type-input  visually-hidden"
         type="radio"
         name="event-type"
-        value="${eventType.toLocaleLowerCase()}
-        ${checked}">
+        value="${eventType.toLocaleLowerCase()}"
+        ${checked}>
         <label class="event__type-label
         event__type-label--${eventType.toLocaleLowerCase()}"
         for="event-type-${eventType.toLocaleLowerCase()}-2">
@@ -161,27 +161,55 @@ const createPointEditingTemplate = (tripPoint) => {
   `;
 };
 
-export default class PointEditingView extends AbstractView {
-  #tripPoint = null;
+export default class PointEditingView extends AbstractStatefulView {
   #handleFormSubmit = null;
+  // #tripPoint = null;
+
   constructor({ tripPoint, onFormSubmit }) {
     super();
-    this.#tripPoint = tripPoint;
+    // this.#tripPoint = tripPoint;
+    this._setState(PointEditingView.parseTripPointToState(tripPoint));
     this.#handleFormSubmit = onFormSubmit;
+    this._restoreHandlers();
+  }
+
+  get template() {
+    return createPointEditingTemplate(this._state);
+  }
+
+  reset(tripPoint) {
+    this.updateElement(PointEditingView.parseTripPointToState(tripPoint));
+  }
+
+  _restoreHandlers() {
     this.element
       .querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
     this.element
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this.#formSubmitHandler);
-  }
-
-  get template() {
-    return createPointEditingTemplate(this.#tripPoint);
+    this.element
+      .querySelector('.event__type-group')
+      .addEventListener('click', this.#chooseTripPointTypeHandler);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(PointEditingView.parseStateToTripPoint(this._state));
+    // this.#handleFormSubmit(this.#tripPoint);
   };
+
+  #chooseTripPointTypeHandler = (evt) => {
+    evt.preventDefault();
+    const eventType = evt.target.innerText;
+    this.updateElement({ type: eventType });
+  };
+
+  static parseTripPointToState(tripPoint) {
+    return { ...tripPoint };
+  }
+
+  static parseStateToTripPoint(state) {
+    return { ...state };
+  }
 }
