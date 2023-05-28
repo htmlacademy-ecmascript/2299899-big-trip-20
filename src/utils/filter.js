@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { FilterType } from '../const.js';
 
 const filter = {
-  [FilterType.EVERYTHING]: (tripPoints) => tripPoints,
+  [FilterType.EVERYTHING]: (tripPoints) => [...tripPoints],
   [FilterType.FUTURE]: (tripPoints) =>
     tripPoints.filter(
       (point) => dayjs(point.timeStart).get('date') > dayjs().get('date')
