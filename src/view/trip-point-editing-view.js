@@ -1,4 +1,8 @@
-import { DATETIME_FORM_FORMAT, TRIP_POINTS_TYPES, UserAction } from '../const.js';
+import {
+  DATETIME_FORM_FORMAT,
+  TRIP_POINTS_TYPES,
+  UserAction,
+} from '../const.js';
 import {
   MOCK_CITIES,
   MOCK_OFFERS,
@@ -61,6 +65,18 @@ const createOffersListTemplate = (tripPoint) =>
     }
   }).join('');
 
+const createOffersTemplate = (tripPoint) => {
+  const offersListTemplate = createOffersListTemplate(tripPoint);
+  return `
+      <section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">
+          ${offersListTemplate}
+        </div>
+      </section>
+    `;
+};
+
 const createPhotoListTemplate = (tripPoint) =>
   tripPoint.destination.photos
     .map(
@@ -71,11 +87,41 @@ const createPhotoListTemplate = (tripPoint) =>
     )
     .join('');
 
+const createDestinationTemplate = (tripPoint) => {
+  const photoListTemplate = createPhotoListTemplate(tripPoint);
+  return `
+        <section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+          <p class="event__destination-description">
+          ${tripPoint.destination.description}
+          </p>
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${photoListTemplate}
+            </div>
+          </div>
+        </section>
+      `;
+};
+
 const createPointEditingTemplate = (tripPoint, action) => {
+  const resetButtonName =
+    action === UserAction.UPDATE_TRIP_POINT ? 'Delete' : 'Cancel';
+  const timeStartEncoded = he.encode(
+    humanizeDate(tripPoint.timeStart, DATETIME_FORM_FORMAT)
+  );
+  const timeFinishEncoded = he.encode(
+    humanizeDate(tripPoint.timeFinish, DATETIME_FORM_FORMAT)
+  );
   const eventTypeListTemplate = createEventTypeListTemplate(tripPoint);
   const destinationListTemplate = createDestinationListTemplate();
-  const offersListTemplate = createOffersListTemplate(tripPoint);
-  const photoListTemplate = createPhotoListTemplate(tripPoint);
+  const offersTemplate =
+    tripPoint.availableOffers.length !== 0
+      ? createOffersTemplate(tripPoint)
+      : '';
+  const destinationTemplate = tripPoint.destination.city
+    ? createDestinationTemplate(tripPoint)
+    : '';
   return `
     <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -107,7 +153,9 @@ const createPointEditingTemplate = (tripPoint, action) => {
             type="text"
             name="event-destination"
             value="${he.encode(tripPoint.destination.city)}"
-            list="destination-list">
+            list="destination-list"
+            required
+            >
             <datalist id="destination-list">
               ${destinationListTemplate}
             </datalist>
@@ -119,14 +167,14 @@ const createPointEditingTemplate = (tripPoint, action) => {
             id="event-start-time"
             type="text"
             name="event-start-time"
-            value="${he.encode(humanizeDate(tripPoint.timeStart, DATETIME_FORM_FORMAT))}">
+            value="${timeStartEncoded}">
             &mdash;
             <label class="visually-hidden" for="event-end-time">To</label>
             <input class="event__input  event__input--time"
             id="event-end-time"
             type="text"
             name="event-end-time"
-            value="${he.encode(humanizeDate(tripPoint.timeFinish, DATETIME_FORM_FORMAT))}">
+            value="${timeFinishEncoded}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -143,31 +191,14 @@ const createPointEditingTemplate = (tripPoint, action) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${action === UserAction.UPDATE_TRIP_POINT ? 'Delete' : 'Cancel'}</button>
+          <button class="event__reset-btn" type="reset">${resetButtonName}</button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-            <div class="event__available-offers">
-              ${offersListTemplate}
-            </div>
-          </section>
-
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">
-            ${tripPoint.destination.description}
-            </p>
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${photoListTemplate}
-              </div>
-            </div>
-          </section>
+          ${offersTemplate}
+          ${destinationTemplate}
         </section>
       </form>
     </li>
@@ -181,13 +212,22 @@ export default class PointEditingView extends AbstractStatefulView {
   #datepicker = null;
   #action = UserAction.UPDATE_TRIP_POINT;
 
-  constructor({ tripPoint = BLANK_TRIP_POINT, action, onFormSubmit, onDeleteClick, onFormClose }) {
+  constructor({
+    tripPoint = BLANK_TRIP_POINT,
+    action,
+    onFormSubmit,
+    onDeleteClick,
+    onFormClose,
+  }) {
     super();
-    this._setState(PointEditingView.parseTripPointToState(tripPoint));
+    this._setState(PointEditingView.parseTripPointToState(tripPoint), {
+      availableOffers: [],
+    });
     this.#action = action;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleFormClose = onFormClose;
+    this.#updateAvailableOffers();
     this._restoreHandlers();
   }
 
@@ -220,9 +260,11 @@ export default class PointEditingView extends AbstractStatefulView {
     this.element
       .querySelector('.event__type-group')
       .addEventListener('click', this.#chooseTripPointTypeHandler);
-    this.element
-      .querySelector('.event__available-offers')
-      .addEventListener('change', this.#chooseOfferHandler);
+    if (this._state.availableOffers.length !== 0) {
+      this.element
+        .querySelector('.event__available-offers')
+        .addEventListener('change', this.#chooseOfferHandler);
+    }
     this.element
       .querySelector('.event__input--destination')
       .addEventListener('input', this.#chooseCityHandler);
@@ -231,6 +273,14 @@ export default class PointEditingView extends AbstractStatefulView {
       .addEventListener('input', this.#changePriceHandler);
     this.#setDatepickerTimeStart();
     this.#setDatepickerTimeFinish();
+  }
+
+  #updateAvailableOffers() {
+    const availableOffers = MOCK_OFFERS.filter((offer) =>
+      offer.tripPointsTypes.includes(this._state.type)
+    );
+    this._setState({ availableOffers });
+    return availableOffers;
   }
 
   #formSubmitHandler = (evt) => {
@@ -255,24 +305,24 @@ export default class PointEditingView extends AbstractStatefulView {
     evt.preventDefault();
     const eventType = evt.target.innerText;
     const offers = [];
-    this.updateElement({ type: eventType, offers });
+    this._setState({ type: eventType });
+    const availableOffers = this.#updateAvailableOffers();
+    this.updateElement({ type: eventType, offers, availableOffers });
   };
 
   #chooseOfferHandler = (evt) => {
     evt.preventDefault();
     const offerType = evt.target.value;
     const isChecked = evt.target.checked;
+    const offers = this._state.offers;
     if (isChecked) {
-      this._state.offers.push(
-        MOCK_OFFERS.filter((offer) => offer.type === offerType)[0]
-      );
+      offers.push(MOCK_OFFERS.find((offer) => offer.type === offerType));
     } else {
-      const element = this._state.offers.find(
-        (offer) => offer.type === offerType
-      );
-      const index = this._state.offers.indexOf(element);
-      this._state.offers.splice(index, 1);
+      const element = offers.find((offer) => offer.type === offerType);
+      const index = offers.indexOf(element);
+      offers.splice(index, 1);
     }
+    this._setState({ offers });
   };
 
   #chooseCityHandler = (evt) => {
@@ -333,6 +383,8 @@ export default class PointEditingView extends AbstractStatefulView {
   }
 
   static parseStateToTripPoint(state) {
-    return { ...state };
+    const tripPoint = { ...state };
+    delete tripPoint.availableOffers;
+    return tripPoint;
   }
 }

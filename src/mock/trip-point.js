@@ -53,8 +53,6 @@ const MOCK_OFFERS = [
       'Ship',
       'Flight',
       'Check-in',
-      'Sightseeing',
-      'Restaurant',
     ],
   },
   {
