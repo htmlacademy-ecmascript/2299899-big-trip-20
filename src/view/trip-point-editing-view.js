@@ -171,12 +171,14 @@ const createPointEditingTemplate = (tripPoint) => {
 
 export default class PointEditingView extends AbstractStatefulView {
   #handleFormSubmit = null;
+  #handleDeleteClick = null;
   #handleFormClose = null;
 
-  constructor({ tripPoint, onFormSubmit, onFormClose }) {
+  constructor({ tripPoint, onFormSubmit, onDeleteClick, onFormClose }) {
     super();
     this._setState(PointEditingView.parseTripPointToState(tripPoint));
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteClick = onDeleteClick;
     this.#handleFormClose = onFormClose;
     this._restoreHandlers();
   }
@@ -194,6 +196,9 @@ export default class PointEditingView extends AbstractStatefulView {
       .querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
     this.element
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
+    this.element
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this.#handleFormClose);
     this.element
@@ -210,6 +215,13 @@ export default class PointEditingView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(PointEditingView.parseStateToTripPoint(this._state));
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(
+      PointEditingView.parseStateToTripPoint(this._state)
+    );
   };
 
   #chooseTripPointTypeHandler = (evt) => {

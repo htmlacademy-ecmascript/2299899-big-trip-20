@@ -11,7 +11,4 @@ const getRandomInt = (max, min = 0) => {
 
 const humanizeDate = (date, format) => (date ? dayjs(date).format(format) : '');
 
-const updateItem = (items, update) =>
-  items.map((item) => (item.id === update.id ? update : item));
-
-export { getRandomArrayElement, getRandomInt, humanizeDate, updateItem };
+export { getRandomArrayElement, getRandomInt, humanizeDate };

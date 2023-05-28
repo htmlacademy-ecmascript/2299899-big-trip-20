@@ -1,6 +1,7 @@
 import { render, replace, remove } from '../framework/render.js';
 import PointEditingView from '../view/trip-point-editing-view.js';
 import PointElementView from '../view/trip-point-view.js';
+import { UserAction, UpdateType } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -35,6 +36,7 @@ export default class TripPointPresenter {
     this.#tripPointEditComponent = new PointEditingView({
       tripPoint: this.#tripPoint,
       onFormSubmit: this.#handleFormSubmit,
+      onDeleteClick: this.#handleDeleteClick,
       onFormClose: this.#handleFormClose,
     });
 
@@ -94,9 +96,21 @@ export default class TripPointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = (tripPoint) => {
-    this.#handleDataChange({ ...tripPoint });
+  #handleFormSubmit = (update) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_TRIP_POINT,
+      UpdateType.MINOR,
+      update
+    );
     this.#replaceFormToPoint();
+  };
+
+  #handleDeleteClick = (tripPoint) => {
+    this.#handleDataChange(
+      UserAction.DELETE_TRIP_POINT,
+      UpdateType.MINOR,
+      tripPoint
+    );
   };
 
   #handleFormClose = () => {
@@ -104,7 +118,7 @@ export default class TripPointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({
+    this.#handleDataChange(UserAction.UPDATE_TRIP_POINT, UpdateType.MINOR, {
       ...this.#tripPoint,
       isFavorite: !this.#tripPoint.isFavorite,
     });

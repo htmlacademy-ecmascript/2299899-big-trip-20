@@ -36,6 +36,18 @@ const FilterTypeMessages = {
   PAST: 'There are no past events now',
 };
 
+const UserAction = {
+  UPDATE_TRIP_POINT: 'UPDATE_TRIP_POINT',
+  ADD_TRIP_POINT: 'ADD_TRIP_POINT',
+  DELETE_TRIP_POINT: 'DELETE_TRIP_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   TRIP_POINTS_TYPES,
   DATE_FORMAT,
@@ -45,4 +57,6 @@ export {
   FilterType,
   SortType,
   FilterTypeMessages,
+  UserAction,
+  UpdateType,
 };
