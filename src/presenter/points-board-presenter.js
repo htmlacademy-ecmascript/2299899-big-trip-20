@@ -1,6 +1,6 @@
 import SortView from '../view/sorting-view.js';
 import PointsListView from '../view/trip-point-list-view.js';
-// import PointCreationView from '../view/trip-point-creation-view.js';
+import NewTripPointPresenter from './new-point-presenter.js';
 import TripPointPresenter from './trip-point-presenter.js';
 import NoPointsView from '../view/no-points-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
@@ -18,13 +18,29 @@ export default class PointsBoardPresenter {
   #currentSortType = SortType.DAY;
   #filterModel = null;
   #filterType = FilterType.EVERYTHING;
+  #newTripPointPresenter = null;
 
-  constructor({ container, tripPointsModel, filterModel }) {
+  constructor({ container, tripPointsModel, filterModel, onNewPointDestroy }) {
     this.#container = container;
     this.#tripPointsModel = tripPointsModel;
     this.#filterModel = filterModel;
+    this.#newTripPointPresenter = new NewTripPointPresenter({
+      container: this.#pointsListComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy,
+    });
     this.#tripPointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+  }
+
+  createTripPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    if (this.#tripPointsModel.tripPoints.length === 0) {
+      remove(this.#noPointsComponent);
+      this.#renderPointsListComponent();
+    }
+    this.#newTripPointPresenter.init();
   }
 
   get tripPoints() {
@@ -96,6 +112,7 @@ export default class PointsBoardPresenter {
   }
 
   #clearPointsBoard({ resetSortType = false } = {}) {
+    this.#newTripPointPresenter.destroy();
     this.#tripPointsPresenters.forEach((presenter) => presenter.destroy());
     this.#tripPointsPresenters.clear();
     remove(this.#sortComponent);
@@ -106,6 +123,7 @@ export default class PointsBoardPresenter {
   }
 
   #handleModeChange = () => {
+    this.#newTripPointPresenter.destroy();
     this.#tripPointsPresenters.forEach((presenter) => presenter.resetView());
   };
 

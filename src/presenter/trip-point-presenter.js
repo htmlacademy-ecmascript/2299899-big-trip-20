@@ -35,6 +35,7 @@ export default class TripPointPresenter {
     });
     this.#tripPointEditComponent = new PointEditingView({
       tripPoint: this.#tripPoint,
+      action: UserAction.UPDATE_TRIP_POINT,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
       onFormClose: this.#handleFormClose,

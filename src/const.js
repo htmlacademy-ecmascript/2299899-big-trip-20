@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const TRIP_POINTS_TYPES = [
   'Taxi',
   'Bus',
@@ -48,6 +50,20 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
+const BLANK_TRIP_POINT = {
+  type: TRIP_POINTS_TYPES[0],
+  destination: {
+    city: '',
+    description: '',
+    photos: [],
+  },
+  timeStart: dayjs().toDate(),
+  timeFinish: dayjs().toDate(),
+  price: '',
+  isFavorite: false,
+  offers: [],
+};
+
 export {
   TRIP_POINTS_TYPES,
   DATE_FORMAT,
@@ -59,4 +75,5 @@ export {
   FilterTypeMessages,
   UserAction,
   UpdateType,
+  BLANK_TRIP_POINT,
 };

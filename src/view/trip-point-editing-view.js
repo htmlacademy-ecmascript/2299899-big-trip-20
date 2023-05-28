@@ -1,4 +1,4 @@
-import { DATETIME_FORM_FORMAT, TRIP_POINTS_TYPES } from '../const.js';
+import { DATETIME_FORM_FORMAT, TRIP_POINTS_TYPES, UserAction } from '../const.js';
 import {
   MOCK_CITIES,
   MOCK_OFFERS,
@@ -9,6 +9,7 @@ import { humanizeDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { BLANK_TRIP_POINT } from '../const.js';
 
 const createEventTypeListTemplate = (tripPoint) =>
   TRIP_POINTS_TYPES.map((eventType) => {
@@ -69,7 +70,7 @@ const createPhotoListTemplate = (tripPoint) =>
     )
     .join('');
 
-const createPointEditingTemplate = (tripPoint) => {
+const createPointEditingTemplate = (tripPoint, action) => {
   const eventTypeListTemplate = createEventTypeListTemplate(tripPoint);
   const destinationListTemplate = createDestinationListTemplate();
   const offersListTemplate = createOffersListTemplate(tripPoint);
@@ -140,7 +141,7 @@ const createPointEditingTemplate = (tripPoint) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__reset-btn" type="reset">${action === UserAction.UPDATE_TRIP_POINT ? 'Delete' : 'Cancel'}</button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>
@@ -176,10 +177,12 @@ export default class PointEditingView extends AbstractStatefulView {
   #handleDeleteClick = null;
   #handleFormClose = null;
   #datepicker = null;
+  #action = UserAction.UPDATE_TRIP_POINT;
 
-  constructor({ tripPoint, onFormSubmit, onDeleteClick, onFormClose }) {
+  constructor({ tripPoint = BLANK_TRIP_POINT, action, onFormSubmit, onDeleteClick, onFormClose }) {
     super();
     this._setState(PointEditingView.parseTripPointToState(tripPoint));
+    this.#action = action;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleFormClose = onFormClose;
@@ -187,7 +190,7 @@ export default class PointEditingView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPointEditingTemplate(this._state);
+    return createPointEditingTemplate(this._state, this.#action);
   }
 
   removeElement() {

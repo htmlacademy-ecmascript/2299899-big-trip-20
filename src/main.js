@@ -14,12 +14,14 @@ const mockTripPoints = Array.from(
 
 const filtersElement = document.querySelector('.trip-controls__filters');
 const tripPointsElement = document.querySelector('.trip-events');
+
 const tripPointsModel = new TripPointsModel({ tripPoints: mockTripPoints });
 const filterModel = new FilterModel();
 const pointsBoardPresenter = new PointsBoardPresenter({
   container: tripPointsElement,
   tripPointsModel,
   filterModel,
+  onNewPointDestroy: handleNewPointFormClose,
 });
 const filterPresenter = new FilterPresenter({
   filterContainer: filtersElement,
@@ -29,3 +31,12 @@ const filterPresenter = new FilterPresenter({
 
 filterPresenter.init();
 pointsBoardPresenter.init();
+
+const newTripPointButton = document.querySelector('.trip-main__event-add-btn');
+newTripPointButton.addEventListener('click', () => {
+  pointsBoardPresenter.createTripPoint();
+  newTripPointButton.disabled = true;
+});
+function handleNewPointFormClose() {
+  newTripPointButton.disabled = false;
+}

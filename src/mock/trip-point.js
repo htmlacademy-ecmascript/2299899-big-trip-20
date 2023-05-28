@@ -131,4 +131,4 @@ const generateMockTripPoint = () => {
   return mockTripPoint;
 };
 
-export { generateMockTripPoint, MOCK_CITIES, MOCK_OFFERS, generateMockPhotos, generateDescription };
+export { generateMockTripPoint, MOCK_CITIES, MOCK_OFFERS, generateMockPhotos, generateDescription, generateId };
