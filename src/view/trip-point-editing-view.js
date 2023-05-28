@@ -221,6 +221,9 @@ export default class PointEditingView extends AbstractStatefulView {
     this.element
       .querySelector('.event__input--destination')
       .addEventListener('input', this.#chooseCityHandler);
+    this.element
+      .querySelector('.event__input--price')
+      .addEventListener('input', this.#changePriceHandler);
     this.#setDatepickerTimeStart();
     this.#setDatepickerTimeFinish();
   }
@@ -235,6 +238,12 @@ export default class PointEditingView extends AbstractStatefulView {
     this.#handleDeleteClick(
       PointEditingView.parseStateToTripPoint(this._state)
     );
+  };
+
+  #changePriceHandler = (evt) => {
+    evt.preventDefault();
+    const price = evt.target.value;
+    this._setState({ price });
   };
 
   #chooseTripPointTypeHandler = (evt) => {
