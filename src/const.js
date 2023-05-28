@@ -59,7 +59,7 @@ const BLANK_TRIP_POINT = {
   },
   timeStart: dayjs().toDate(),
   timeFinish: dayjs().toDate(),
-  price: '',
+  price: 0,
   isFavorite: false,
   offers: [],
 };

@@ -10,13 +10,14 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { BLANK_TRIP_POINT } from '../const.js';
+import he from 'he';
 
 const createEventTypeListTemplate = (tripPoint) =>
   TRIP_POINTS_TYPES.map((eventType) => {
     const checked = eventType === tripPoint.type ? 'checked' : '';
     return `
       <div class="event__type-item">
-        <input id="event-type-${eventType.toLocaleLowerCase()}-2"
+        <input id="event-type-${eventType.toLocaleLowerCase()}"
         class="event__type-input  visually-hidden"
         type="radio"
         name="event-type"
@@ -24,7 +25,7 @@ const createEventTypeListTemplate = (tripPoint) =>
         ${checked}>
         <label class="event__type-label
         event__type-label--${eventType.toLocaleLowerCase()}"
-        for="event-type-${eventType.toLocaleLowerCase()}-2">
+        for="event-type-${eventType.toLocaleLowerCase()}">
         ${eventType}
         </label>
       </div>
@@ -45,12 +46,12 @@ const createOffersListTemplate = (tripPoint) =>
       return `
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
-        id="event-offer-${offer.type.toLowerCase()}-2"
+        id="event-offer-${offer.type.toLowerCase()}"
         type="checkbox"
         name="event-offer-${offer.type.toLowerCase()}"
         value="${offer.type.toLowerCase()}"
         ${checked}>
-        <label class="event__offer-label" for="event-offer-${offer.type.toLowerCase()}-2">
+        <label class="event__offer-label" for="event-offer-${offer.type.toLowerCase()}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -80,14 +81,14 @@ const createPointEditingTemplate = (tripPoint, action) => {
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-2">
+            <label class="event__type  event__type-btn" for="event-type-toggle">
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon"
               width="17" height="17"
               src="img/icons/${tripPoint.type}.png"
               alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-2" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -98,44 +99,45 @@ const createPointEditingTemplate = (tripPoint, action) => {
           </div>
 
           <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-1">
+            <label class="event__label  event__type-output" for="event-destination">
               ${tripPoint.type}
             </label>
             <input class="event__input  event__input--destination"
-            id="event-destination-1"
+            id="event-destination"
             type="text"
             name="event-destination"
-            value="${tripPoint.destination.city}"
-            list="destination-list-1">
-            <datalist id="destination-list-1">
+            value="${he.encode(tripPoint.destination.city)}"
+            list="destination-list">
+            <datalist id="destination-list">
               ${destinationListTemplate}
             </datalist>
           </div>
 
           <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-1">From</label>
+            <label class="visually-hidden" for="event-start-time">From</label>
             <input class="event__input  event__input--time"
-            id="event-start-time-1"
+            id="event-start-time"
             type="text"
             name="event-start-time"
-            value="${humanizeDate(tripPoint.timeStart, DATETIME_FORM_FORMAT)}">
+            value="${he.encode(humanizeDate(tripPoint.timeStart, DATETIME_FORM_FORMAT))}">
             &mdash;
-            <label class="visually-hidden" for="event-end-time-1">To</label>
+            <label class="visually-hidden" for="event-end-time">To</label>
             <input class="event__input  event__input--time"
-            id="event-end-time-1"
+            id="event-end-time"
             type="text"
             name="event-end-time"
-            value="${humanizeDate(tripPoint.timeFinish, DATETIME_FORM_FORMAT)}">
+            value="${he.encode(humanizeDate(tripPoint.timeFinish, DATETIME_FORM_FORMAT))}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
-            <label class="event__label" for="event-price-1">
+            <label class="event__label" for="event-price">
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
             <input class="event__input  event__input--price"
-            id="event-price-1"
-            type="text"
+            id="event-price"
+            type="number"
+            min="0"
             name="event-price"
             value="${tripPoint.price}">
           </div>
@@ -301,7 +303,7 @@ export default class PointEditingView extends AbstractStatefulView {
   #setDatepickerTimeStart() {
     if (this._state.timeStart) {
       this.#datepicker = flatpickr(
-        this.element.querySelector('#event-start-time-1'),
+        this.element.querySelector('#event-start-time'),
         {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
@@ -315,7 +317,7 @@ export default class PointEditingView extends AbstractStatefulView {
   #setDatepickerTimeFinish() {
     if (this._state.timeFinish) {
       this.#datepicker = flatpickr(
-        this.element.querySelector('#event-end-time-1'),
+        this.element.querySelector('#event-end-time'),
         {
           enableTime: true,
           dateFormat: 'd/m/y H:i',

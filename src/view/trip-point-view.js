@@ -1,3 +1,4 @@
+import he from 'he';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { humanizeDate } from '../utils/common.js';
@@ -50,7 +51,7 @@ const createPointElementTemplate = (tripPoint) => {
           alt="Event type icon">
         </div>
         <h3 class="event__title">
-        ${tripPoint.type} ${tripPoint.destination.city}
+        ${tripPoint.type} ${he.encode(tripPoint.destination.city)}
         </h3>
         <div class="event__schedule">
           <p class="event__time">
