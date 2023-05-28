@@ -39,4 +39,7 @@ newTripPointButton.addEventListener('click', () => {
 });
 function handleNewPointFormClose() {
   newTripPointButton.disabled = false;
+  if (tripPointsModel.tripPoints.length === 0) {
+    pointsBoardPresenter.init();
+  }
 }
