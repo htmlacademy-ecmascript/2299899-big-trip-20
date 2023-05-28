@@ -6,6 +6,7 @@ import NoPointsView from '../view/no-points-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import { SortType, UpdateType, UserAction } from '../const.js';
 import { sortTime, sortPrice } from '../utils/sorter.js';
+import { filter } from '../utils/filter.js';
 
 export default class PointsBoardPresenter {
   #container = null;
@@ -15,21 +16,27 @@ export default class PointsBoardPresenter {
   #pointsListComponent = new PointsListView();
   #noPointsComponent = new NoPointsView();
   #currentSortType = SortType.DAY;
+  #filterModel = null;
 
-  constructor({ container, tripPointsModel }) {
+  constructor({ container, tripPointsModel, filterModel }) {
     this.#container = container;
     this.#tripPointsModel = tripPointsModel;
+    this.#filterModel = filterModel;
     this.#tripPointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get tripPoints() {
+    const filterType = this.#filterModel.filter;
+    const tripPoints = this.#tripPointsModel.tripPoints;
+    const filteredTripPoints = filter[filterType](tripPoints);
     switch (this.#currentSortType) {
       case SortType.TIME:
-        return [...this.#tripPointsModel.tripPoints].sort(sortTime);
+        return filteredTripPoints.sort(sortTime);
       case SortType.PRICE:
-        return [...this.#tripPointsModel.tripPoints].sort(sortPrice);
+        return filteredTripPoints.sort(sortPrice);
     }
-    return this.#tripPointsModel.tripPoints;
+    return filteredTripPoints;
   }
 
   init() {
@@ -56,11 +63,9 @@ export default class PointsBoardPresenter {
 
   #renderTripPoints() {
     this.#renderPointsListComponent();
-    for (let i = 0; i < this.#tripPointsModel.tripPoints.length; i++) {
-      this.#renderTripPoint(
-        this.#tripPointsModel.tripPoints[i],
-        this.#pointsListComponent
-      );
+    const tripPoints = this.tripPoints;
+    for (let i = 0; i < tripPoints.length; i++) {
+      this.#renderTripPoint(tripPoints[i], this.#pointsListComponent);
     }
   }
 

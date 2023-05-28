@@ -1,10 +1,9 @@
-import FiltersView from './view/filters-view.js';
-import { render } from './framework/render.js';
 import PointsBoardPresenter from './presenter/points-board-presenter.js';
 import TripPointsModel from './model/trip-points-model.js';
-import { generateFilter } from './mock/filter.js';
 import { generateMockTripPoint } from './mock/trip-point.js';
 import { getRandomInt } from './utils/common.js';
+import FilterModel from './model/filter-model.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 
 const MOCK_TRIP_POINTS_MAX_AMOUNT = 7;
 
@@ -16,11 +15,17 @@ const mockTripPoints = Array.from(
 const filtersElement = document.querySelector('.trip-controls__filters');
 const tripPointsElement = document.querySelector('.trip-events');
 const tripPointsModel = new TripPointsModel({ tripPoints: mockTripPoints });
+const filterModel = new FilterModel();
 const pointsBoardPresenter = new PointsBoardPresenter({
   container: tripPointsElement,
   tripPointsModel,
+  filterModel,
 });
-const filters = generateFilter(tripPointsModel.tripPoints);
+const filterPresenter = new FilterPresenter({
+  filterContainer: filtersElement,
+  filterModel,
+  tripPointsModel,
+});
 
-render(new FiltersView({ filters }), filtersElement);
+filterPresenter.init();
 pointsBoardPresenter.init();
