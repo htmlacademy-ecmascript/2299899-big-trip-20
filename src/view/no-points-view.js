@@ -11,15 +11,12 @@ const createNoPointsTemplate = (activeFilter) => {
 export default class NoPointsView extends AbstractView {
   #activeFilter = null;
 
+  constructor({ filterType }) {
+    super();
+    this.#activeFilter = filterType;
+  }
+
   get template() {
-    return createNoPointsTemplate(this.#activeFilter);
-  }
-
-  get activeFilter() {
-    return this.#activeFilter;
-  }
-
-  set activeFilter(filter) {
-    this.#activeFilter = filter;
+    return createNoPointsTemplate(this.#activeFilter.toUpperCase());
   }
 }

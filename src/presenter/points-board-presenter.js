@@ -4,7 +4,7 @@ import PointsListView from '../view/trip-point-list-view.js';
 import TripPointPresenter from './trip-point-presenter.js';
 import NoPointsView from '../view/no-points-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
-import { SortType, UpdateType, UserAction } from '../const.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortTime, sortPrice } from '../utils/sorter.js';
 import { filter } from '../utils/filter.js';
 
@@ -14,9 +14,10 @@ export default class PointsBoardPresenter {
   #tripPointsPresenters = new Map();
   #sortComponent = null;
   #pointsListComponent = new PointsListView();
-  #noPointsComponent = new NoPointsView();
+  #noPointsComponent = null;
   #currentSortType = SortType.DAY;
   #filterModel = null;
+  #filterType = FilterType.EVERYTHING;
 
   constructor({ container, tripPointsModel, filterModel }) {
     this.#container = container;
@@ -27,9 +28,9 @@ export default class PointsBoardPresenter {
   }
 
   get tripPoints() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const tripPoints = this.#tripPointsModel.tripPoints;
-    const filteredTripPoints = filter[filterType](tripPoints);
+    const filteredTripPoints = filter[this.#filterType](tripPoints);
     switch (this.#currentSortType) {
       case SortType.TIME:
         return filteredTripPoints.sort(sortTime);
@@ -56,8 +57,10 @@ export default class PointsBoardPresenter {
     }
   }
 
-  #renderNoPointsMessage(currentFilter) {
-    this.#noPointsComponent.activeFilter = currentFilter;
+  #renderNoPointsMessage() {
+    this.#noPointsComponent = new NoPointsView({
+      filterType: this.#filterType,
+    });
     render(this.#noPointsComponent, this.#container);
   }
 
