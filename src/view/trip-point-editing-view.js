@@ -7,6 +7,8 @@ import {
 } from '../mock/trip-point.js';
 import { humanizeDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEventTypeListTemplate = (tripPoint) =>
   TRIP_POINTS_TYPES.map((eventType) => {
@@ -173,6 +175,7 @@ export default class PointEditingView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleDeleteClick = null;
   #handleFormClose = null;
+  #datepicker = null;
 
   constructor({ tripPoint, onFormSubmit, onDeleteClick, onFormClose }) {
     super();
@@ -185,6 +188,14 @@ export default class PointEditingView extends AbstractStatefulView {
 
   get template() {
     return createPointEditingTemplate(this._state);
+  }
+
+  removeElement() {
+    super.removeElement();
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
   }
 
   reset(tripPoint) {
@@ -210,6 +221,8 @@ export default class PointEditingView extends AbstractStatefulView {
     this.element
       .querySelector('.event__input--destination')
       .addEventListener('input', this.#chooseCityHandler);
+    this.#setDatepickerTimeStart();
+    this.#setDatepickerTimeFinish();
   }
 
   #formSubmitHandler = (evt) => {
@@ -260,6 +273,46 @@ export default class PointEditingView extends AbstractStatefulView {
       this.updateElement({ destination });
     }
   };
+
+  #timeStartChangeHandler = ([userDate]) => {
+    this.updateElement({
+      timeStart: userDate,
+    });
+  };
+
+  #timeFinishChangeHandler = ([userDate]) => {
+    this.updateElement({
+      timeFinish: userDate,
+    });
+  };
+
+  #setDatepickerTimeStart() {
+    if (this._state.timeStart) {
+      this.#datepicker = flatpickr(
+        this.element.querySelector('#event-start-time-1'),
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          defaultDate: this._state.timeStart,
+          onChange: this.#timeStartChangeHandler,
+        }
+      );
+    }
+  }
+
+  #setDatepickerTimeFinish() {
+    if (this._state.timeFinish) {
+      this.#datepicker = flatpickr(
+        this.element.querySelector('#event-end-time-1'),
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          defaultDate: this._state.timeFinish,
+          onChange: this.#timeFinishChangeHandler,
+        }
+      );
+    }
+  }
 
   static parseTripPointToState(tripPoint) {
     return { ...tripPoint };
