@@ -44,7 +44,7 @@ export default class NewTripPointPresenter {
 
   #handleFormSubmit = (tripPoint) => {
     this.#handleDataChange(
-      UserAction.ADD_TASK,
+      UserAction.ADD_TRIP_POINT,
       UpdateType.MINOR,
       { id: generateId(), ...tripPoint }
     );
