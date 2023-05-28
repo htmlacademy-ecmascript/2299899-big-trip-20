@@ -61,15 +61,12 @@ export default class PointsBoardPresenter {
   }
 
   #renderPointsBoard() {
-    const currentFilter = document.querySelector(
-      'input[name="trip-filter"]:checked'
-    );
-    const currentFilterPointsAmount = currentFilter.dataset.tripPointsAmount;
-    if (currentFilterPointsAmount !== '0') {
+    const currentFilterPointsAmount = this.#tripPointsModel.tripPoints.length;
+    if (currentFilterPointsAmount) {
       this.#renderSortComponent();
       this.#renderTripPoints();
     } else {
-      this.#renderNoPointsMessage(currentFilter.value.toUpperCase());
+      this.#renderNoPointsMessage(this.#filterType.toUpperCase());
     }
   }
 
@@ -118,7 +115,7 @@ export default class PointsBoardPresenter {
     remove(this.#sortComponent);
     remove(this.#noPointsComponent);
     if (resetSortType) {
-      this.#currentSortType = SortType.DEFAULT;
+      this.#currentSortType = SortType.DAY;
     }
   }
 
