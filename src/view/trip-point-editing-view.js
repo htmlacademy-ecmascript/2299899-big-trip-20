@@ -262,9 +262,9 @@ export default class PointEditingView extends AbstractStatefulView {
         MOCK_OFFERS.filter((offer) => offer.type === offerType)[0]
       );
     } else {
-      const element = this._state.offers.filter(
+      const element = this._state.offers.find(
         (offer) => offer.type === offerType
-      )[0];
+      );
       const index = this._state.offers.indexOf(element);
       this._state.offers.splice(index, 1);
     }
