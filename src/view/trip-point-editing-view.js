@@ -329,7 +329,7 @@ export default class PointEditingView extends AbstractStatefulView {
         this.#availableTypeOffers.find((offer) => offer.id === offerId)
       );
     } else {
-      const element = offers.find((offer) => offer.Id === offerId);
+      const element = offers.find((offer) => offer.id === offerId);
       const index = offers.indexOf(element);
       offers.splice(index, 1);
     }
