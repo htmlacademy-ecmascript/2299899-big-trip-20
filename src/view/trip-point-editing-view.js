@@ -3,12 +3,6 @@ import {
   TRIP_POINTS_TYPES,
   UserAction,
 } from '../const.js';
-import {
-  MOCK_CITIES,
-  MOCK_OFFERS,
-  generateDescription,
-  generateMockPhotos,
-} from '../mock/trip-point.js';
 import { humanizeDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
@@ -36,34 +30,36 @@ const createEventTypeListTemplate = (tripPoint) =>
     `;
   }).join('');
 
-const createDestinationListTemplate = () =>
-  MOCK_CITIES.map((city) => `<option value="${city}"></option>`).join('');
+const createDestinationListTemplate = (tripPoint) =>
+  tripPoint.availableDestinations
+    .map((destination) => `<option value="${destination.name}"></option>`)
+    .join('');
 
 const createOffersListTemplate = (tripPoint) =>
-  MOCK_OFFERS.map((offer) => {
-    if (offer.tripPointsTypes.includes(tripPoint.type)) {
-      const checked = tripPoint.offers.some(
-        (element) => element.type === offer.type
+  tripPoint.availableTypeOffers
+    .map((offer) => {
+      const checked = tripPoint.offers.find(
+        (searchedOffer) => searchedOffer.id === offer.id
       )
         ? 'checked'
         : '';
       return `
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
-        id="event-offer-${offer.type.toLowerCase()}"
+        id="event-offer-${offer.id}"
         type="checkbox"
-        name="event-offer-${offer.type.toLowerCase()}"
-        value="${offer.type.toLowerCase()}"
+        name="event-offer-${offer.id}"
+        value="${offer.id}"
         ${checked}>
-        <label class="event__offer-label" for="event-offer-${offer.type.toLowerCase()}">
+        <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </label>
       </div>
       `;
-    }
-  }).join('');
+    })
+    .join('');
 
 const createOffersTemplate = (tripPoint) => {
   const offersListTemplate = createOffersListTemplate(tripPoint);
@@ -78,12 +74,12 @@ const createOffersTemplate = (tripPoint) => {
 };
 
 const createPhotoListTemplate = (tripPoint) =>
-  tripPoint.destination.photos
+  tripPoint.destination.pictures
     .map(
-      (photo) => `
+      (picture) => `
     <img class="event__photo"
-    src="${photo}"
-    alt="Event photo">`
+    src="${picture.src}"
+    alt="${picture.description}">`
     )
     .join('');
 
@@ -114,12 +110,12 @@ const createPointEditingTemplate = (tripPoint, action) => {
     humanizeDate(tripPoint.timeFinish, DATETIME_FORM_FORMAT)
   );
   const eventTypeListTemplate = createEventTypeListTemplate(tripPoint);
-  const destinationListTemplate = createDestinationListTemplate();
+  const destinationListTemplate = createDestinationListTemplate(tripPoint);
   const offersTemplate =
-    tripPoint.availableOffers.length !== 0
+    tripPoint.availableTypeOffers.length !== 0
       ? createOffersTemplate(tripPoint)
       : '';
-  const destinationTemplate = tripPoint.destination.city
+  const destinationTemplate = tripPoint.destination.name
     ? createDestinationTemplate(tripPoint)
     : '';
   return `
@@ -211,23 +207,27 @@ export default class PointEditingView extends AbstractStatefulView {
   #handleFormClose = null;
   #datepicker = null;
   #action = UserAction.UPDATE_TRIP_POINT;
+  #availableDestinations = [];
+  #availableTypeOffers = [];
 
   constructor({
     tripPoint = BLANK_TRIP_POINT,
+    availableDestinations = [],
+    availableTypeOffers = [],
     action,
     onFormSubmit,
     onDeleteClick,
     onFormClose,
   }) {
     super();
-    this._setState(PointEditingView.parseTripPointToState(tripPoint), {
-      availableOffers: [],
-    });
+    this._setState(PointEditingView.parseTripPointToState(tripPoint));
+    this._setState({ availableDestinations, availableTypeOffers });
+    this.#availableDestinations = availableDestinations;
+    this.#availableTypeOffers = availableTypeOffers;
     this.#action = action;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleFormClose = onFormClose;
-    this.#updateAvailableOffers();
     this._restoreHandlers();
   }
 
@@ -260,7 +260,7 @@ export default class PointEditingView extends AbstractStatefulView {
     this.element
       .querySelector('.event__type-group')
       .addEventListener('click', this.#chooseTripPointTypeHandler);
-    if (this._state.availableOffers.length !== 0) {
+    if (this._state.availableTypeOffers.length !== 0) {
       this.element
         .querySelector('.event__available-offers')
         .addEventListener('change', this.#chooseOfferHandler);
@@ -273,14 +273,6 @@ export default class PointEditingView extends AbstractStatefulView {
       .addEventListener('input', this.#changePriceHandler);
     this.#setDatepickerTimeStart();
     this.#setDatepickerTimeFinish();
-  }
-
-  #updateAvailableOffers() {
-    const availableOffers = MOCK_OFFERS.filter((offer) =>
-      offer.tripPointsTypes.includes(this._state.type)
-    );
-    this._setState({ availableOffers });
-    return availableOffers;
   }
 
   #formSubmitHandler = (evt) => {
@@ -306,19 +298,18 @@ export default class PointEditingView extends AbstractStatefulView {
     const eventType = evt.target.innerText;
     const offers = [];
     this._setState({ type: eventType });
-    const availableOffers = this.#updateAvailableOffers();
-    this.updateElement({ type: eventType, offers, availableOffers });
+    this.updateElement({ type: eventType, offers });
   };
 
   #chooseOfferHandler = (evt) => {
     evt.preventDefault();
-    const offerType = evt.target.value;
+    const offerId = evt.target.value;
     const isChecked = evt.target.checked;
     const offers = this._state.offers;
     if (isChecked) {
-      offers.push(MOCK_OFFERS.find((offer) => offer.type === offerType));
+      offers.push(this.#availableTypeOffers.find((offer) => offer.id === offerId));
     } else {
-      const element = offers.find((offer) => offer.type === offerType);
+      const element = offers.find((offer) => offer.Id === offerId);
       const index = offers.indexOf(element);
       offers.splice(index, 1);
     }
@@ -328,13 +319,9 @@ export default class PointEditingView extends AbstractStatefulView {
   #chooseCityHandler = (evt) => {
     evt.preventDefault();
     const inputCity = evt.target.value;
-    if (MOCK_CITIES.includes(inputCity)) {
-      const destination = {
-        name: evt.target.value,
-        description: generateDescription(),
-        pictures: generateMockPhotos(),
-      };
-      this.updateElement({ destination });
+    const updatedDestination = this.#availableDestinations.find((destination) => destination.name === inputCity);
+    if (updatedDestination) {
+      this.updateElement({ destination: updatedDestination });
     }
   };
 
@@ -384,7 +371,8 @@ export default class PointEditingView extends AbstractStatefulView {
 
   static parseStateToTripPoint(state) {
     const tripPoint = { ...state };
-    delete tripPoint.availableOffers;
+    delete tripPoint.availableDestinations;
+    delete tripPoint.availableTypeOffers;
     return tripPoint;
   }
 }

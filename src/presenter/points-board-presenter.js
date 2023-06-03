@@ -101,6 +101,8 @@ export default class PointsBoardPresenter {
       container: tripPointsContainer,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
+      availableDestinations: this.#tripPointsModel.destinations,
+      availableOffers: this.#tripPointsModel.offers,
     });
     tripPointPresenter.init(tripPoint);
     this.#tripPointsPresenters.set(tripPoint.id, tripPointPresenter);

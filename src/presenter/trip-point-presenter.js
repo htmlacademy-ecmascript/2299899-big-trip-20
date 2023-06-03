@@ -16,17 +16,22 @@ export default class TripPointPresenter {
   #handleDataChange = null;
   #handleModeChange = null;
   #mode = Mode.DEFAULT;
+  #availableDestinations = [];
+  #availableOffers = [];
 
-  constructor({ container, onDataChange, onModeChange }) {
+  constructor({ container, onDataChange, onModeChange, availableDestinations, availableOffers }) {
     this.#container = container;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
+    this.#availableDestinations = availableDestinations;
+    this.#availableOffers = availableOffers;
   }
 
   init(tripPoint) {
     this.#tripPoint = tripPoint;
     const prevTripPointComponent = this.#tripPointComponent;
     const prevTripPointEditComponent = this.#tripPointEditComponent;
+    const availableTypeOffers = this.#availableOffers.find((offer) => offer.type === this.#tripPoint.type).offers;
 
     this.#tripPointComponent = new PointElementView({
       tripPoint: this.#tripPoint,
@@ -35,6 +40,8 @@ export default class TripPointPresenter {
     });
     this.#tripPointEditComponent = new PointEditingView({
       tripPoint: this.#tripPoint,
+      availableDestinations: this.#availableDestinations,
+      availableTypeOffers,
       action: UserAction.UPDATE_TRIP_POINT,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,

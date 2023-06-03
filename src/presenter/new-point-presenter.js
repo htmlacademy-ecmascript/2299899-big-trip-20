@@ -1,6 +1,5 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
 import { UserAction, UpdateType } from '../const.js';
-import { generateId } from '../mock/trip-point.js';
 import PointEditingView from '../view/trip-point-editing-view.js';
 
 export default class NewTripPointPresenter {
@@ -46,7 +45,7 @@ export default class NewTripPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_TRIP_POINT,
       UpdateType.MINOR,
-      { id: generateId(), ...tripPoint }
+      { ...tripPoint }
     );
     this.destroy();
   };
