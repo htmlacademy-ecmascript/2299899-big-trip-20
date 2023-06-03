@@ -208,12 +208,13 @@ export default class PointEditingView extends AbstractStatefulView {
   #datepicker = null;
   #action = UserAction.UPDATE_TRIP_POINT;
   #availableDestinations = [];
+  #availableOffers = [];
   #availableTypeOffers = [];
 
   constructor({
     tripPoint = BLANK_TRIP_POINT,
     availableDestinations = [],
-    availableTypeOffers = [],
+    availableOffers = [],
     action,
     onFormSubmit,
     onDeleteClick,
@@ -221,9 +222,13 @@ export default class PointEditingView extends AbstractStatefulView {
   }) {
     super();
     this._setState(PointEditingView.parseTripPointToState(tripPoint));
-    this._setState({ availableDestinations, availableTypeOffers });
     this.#availableDestinations = availableDestinations;
+    this.#availableOffers = availableOffers;
+    const availableTypeOffers = this.#availableOffers.find(
+      (offer) => offer.type === this._state.type.toLowerCase()
+    ).offers;
     this.#availableTypeOffers = availableTypeOffers;
+    this._setState({ availableDestinations, availableTypeOffers });
     this.#action = action;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
@@ -275,6 +280,14 @@ export default class PointEditingView extends AbstractStatefulView {
     this.#setDatepickerTimeFinish();
   }
 
+  #updateAvailableTypeOffers() {
+    const availableTypeOffers = this.#availableOffers.find(
+      (offer) => offer.type === this._state.type.toLowerCase()
+    ).offers;
+    this._setState({ availableTypeOffers });
+    return availableTypeOffers;
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(PointEditingView.parseStateToTripPoint(this._state));
@@ -298,7 +311,12 @@ export default class PointEditingView extends AbstractStatefulView {
     const eventType = evt.target.innerText;
     const offers = [];
     this._setState({ type: eventType });
-    this.updateElement({ type: eventType, offers });
+    const availableTypeOffers = this.#updateAvailableTypeOffers();
+    this.updateElement({
+      type: eventType,
+      offers,
+      availableTypeOffers,
+    });
   };
 
   #chooseOfferHandler = (evt) => {
@@ -307,7 +325,9 @@ export default class PointEditingView extends AbstractStatefulView {
     const isChecked = evt.target.checked;
     const offers = this._state.offers;
     if (isChecked) {
-      offers.push(this.#availableTypeOffers.find((offer) => offer.id === offerId));
+      offers.push(
+        this.#availableTypeOffers.find((offer) => offer.id === offerId)
+      );
     } else {
       const element = offers.find((offer) => offer.Id === offerId);
       const index = offers.indexOf(element);
@@ -319,7 +339,9 @@ export default class PointEditingView extends AbstractStatefulView {
   #chooseCityHandler = (evt) => {
     evt.preventDefault();
     const inputCity = evt.target.value;
-    const updatedDestination = this.#availableDestinations.find((destination) => destination.name === inputCity);
+    const updatedDestination = this.#availableDestinations.find(
+      (destination) => destination.name === inputCity
+    );
     if (updatedDestination) {
       this.updateElement({ destination: updatedDestination });
     }

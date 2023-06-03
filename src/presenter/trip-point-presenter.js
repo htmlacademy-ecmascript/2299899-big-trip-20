@@ -31,7 +31,6 @@ export default class TripPointPresenter {
     this.#tripPoint = tripPoint;
     const prevTripPointComponent = this.#tripPointComponent;
     const prevTripPointEditComponent = this.#tripPointEditComponent;
-    const availableTypeOffers = this.#availableOffers.find((offer) => offer.type === this.#tripPoint.type).offers;
 
     this.#tripPointComponent = new PointElementView({
       tripPoint: this.#tripPoint,
@@ -41,7 +40,7 @@ export default class TripPointPresenter {
     this.#tripPointEditComponent = new PointEditingView({
       tripPoint: this.#tripPoint,
       availableDestinations: this.#availableDestinations,
-      availableTypeOffers,
+      availableOffers: this.#availableOffers,
       action: UserAction.UPDATE_TRIP_POINT,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,

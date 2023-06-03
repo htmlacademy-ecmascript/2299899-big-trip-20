@@ -54,9 +54,9 @@ const UpdateType = {
 const BLANK_TRIP_POINT = {
   type: TRIP_POINTS_TYPES[0],
   destination: {
-    city: '',
+    name: '',
     description: '',
-    photos: [],
+    pictures: [],
   },
   timeStart: dayjs().toDate(),
   timeFinish: dayjs().toDate(),

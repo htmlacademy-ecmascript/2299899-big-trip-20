@@ -14,7 +14,7 @@ export default class NewTripPointPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init() {
+  init(availableDestinations, availableOffers) {
     if (this.#newPointComponent !== null) {
       return;
     }
@@ -22,6 +22,8 @@ export default class NewTripPointPresenter {
       action: UserAction.ADD_TRIP_POINT,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
+      availableDestinations,
+      availableOffers,
     });
     render(
       this.#newPointComponent,
@@ -42,11 +44,9 @@ export default class NewTripPointPresenter {
   }
 
   #handleFormSubmit = (tripPoint) => {
-    this.#handleDataChange(
-      UserAction.ADD_TRIP_POINT,
-      UpdateType.MINOR,
-      { ...tripPoint }
-    );
+    this.#handleDataChange(UserAction.ADD_TRIP_POINT, UpdateType.MINOR, {
+      ...tripPoint,
+    });
     this.destroy();
   };
 

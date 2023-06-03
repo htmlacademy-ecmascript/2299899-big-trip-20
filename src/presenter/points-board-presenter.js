@@ -22,28 +22,33 @@ export default class PointsBoardPresenter {
   #filterType = FilterType.EVERYTHING;
   #newTripPointPresenter = null;
   #isLoading = true;
+  #newTripPointButton = document.querySelector('.trip-main__event-add-btn');
 
-  constructor({ container, tripPointsModel, filterModel, onNewPointDestroy }) {
+  constructor({ container, tripPointsModel, filterModel }) {
     this.#container = container;
     this.#tripPointsModel = tripPointsModel;
     this.#filterModel = filterModel;
+    this.#newTripPointButton.addEventListener('click', () =>
+      this.createTripPoint()
+    );
     this.#newTripPointPresenter = new NewTripPointPresenter({
       container: this.#pointsListComponent.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewPointDestroy,
+      onDestroy: () => this.#handleNewPointFormClose(),
     });
     this.#tripPointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   createTripPoint() {
+    this.#newTripPointButton.disabled = true;
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     if (this.#tripPointsModel.tripPoints.length === 0) {
       remove(this.#noPointsComponent);
       this.#renderPointsListComponent();
     }
-    this.#newTripPointPresenter.init();
+    this.#newTripPointPresenter.init(this.#tripPointsModel.destinations, this.#tripPointsModel.offers);
   }
 
   get tripPoints() {
@@ -61,6 +66,13 @@ export default class PointsBoardPresenter {
 
   init() {
     this.#renderPointsBoard();
+  }
+
+  #handleNewPointFormClose() {
+    this.#newTripPointButton.disabled = false;
+    if (this.#tripPointsModel.tripPoints.length === 0) {
+      this.init();
+    }
   }
 
   #renderPointsBoard() {

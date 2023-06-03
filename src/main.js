@@ -18,7 +18,6 @@ const pointsBoardPresenter = new PointsBoardPresenter({
   container: tripPointsElement,
   tripPointsModel,
   filterModel,
-  onNewPointDestroy: handleNewPointFormClose,
 });
 const filterPresenter = new FilterPresenter({
   filterContainer: filtersElement,
@@ -29,15 +28,3 @@ const filterPresenter = new FilterPresenter({
 tripPointsModel.init();
 filterPresenter.init();
 pointsBoardPresenter.init();
-
-const newTripPointButton = document.querySelector('.trip-main__event-add-btn');
-newTripPointButton.addEventListener('click', () => {
-  pointsBoardPresenter.createTripPoint();
-  newTripPointButton.disabled = true;
-});
-function handleNewPointFormClose() {
-  newTripPointButton.disabled = false;
-  if (tripPointsModel.tripPoints.length === 0) {
-    pointsBoardPresenter.init();
-  }
-}
