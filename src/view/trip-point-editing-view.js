@@ -297,7 +297,7 @@ export default class PointEditingView extends AbstractStatefulView {
 
   #changePriceHandler = (evt) => {
     evt.preventDefault();
-    const price = evt.target.value;
+    const price = evt.target.valueAsNumber;
     this._setState({ price });
   };
 
