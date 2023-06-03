@@ -152,7 +152,7 @@ const createPointEditingTemplate = (tripPoint, action) => {
             id="event-destination"
             type="text"
             name="event-destination"
-            value="${he.encode(tripPoint.destination.city)}"
+            value="${he.encode(tripPoint.destination.name)}"
             list="destination-list"
             required
             >
@@ -330,9 +330,9 @@ export default class PointEditingView extends AbstractStatefulView {
     const inputCity = evt.target.value;
     if (MOCK_CITIES.includes(inputCity)) {
       const destination = {
-        city: evt.target.value,
+        name: evt.target.value,
         description: generateDescription(),
-        photos: generateMockPhotos(),
+        pictures: generateMockPhotos(),
       };
       this.updateElement({ destination });
     }

@@ -1,21 +1,18 @@
 import PointsBoardPresenter from './presenter/points-board-presenter.js';
 import TripPointsModel from './model/trip-points-model.js';
-import { generateMockTripPoint } from './mock/trip-point.js';
-import { getRandomInt } from './utils/common.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+import TripPointsApiService from './trip-points-api-service.js';
 
-const MOCK_TRIP_POINTS_MAX_AMOUNT = 7;
-
-const mockTripPoints = Array.from(
-  { length: getRandomInt(MOCK_TRIP_POINTS_MAX_AMOUNT) },
-  generateMockTripPoint
-);
+const AUTHORIZATION = 'Basic mg0jinee09ug34nf9v-j';
+const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 
 const filtersElement = document.querySelector('.trip-controls__filters');
 const tripPointsElement = document.querySelector('.trip-events');
 
-const tripPointsModel = new TripPointsModel({ tripPoints: mockTripPoints });
+const tripPointsModel = new TripPointsModel({
+  tripPointsApiService: new TripPointsApiService(END_POINT, AUTHORIZATION),
+});
 const filterModel = new FilterModel();
 const pointsBoardPresenter = new PointsBoardPresenter({
   container: tripPointsElement,
@@ -29,6 +26,7 @@ const filterPresenter = new FilterPresenter({
   tripPointsModel,
 });
 
+tripPointsModel.init();
 filterPresenter.init();
 pointsBoardPresenter.init();
 

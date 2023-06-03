@@ -51,7 +51,7 @@ const createPointElementTemplate = (tripPoint) => {
           alt="Event type icon">
         </div>
         <h3 class="event__title">
-        ${tripPoint.type} ${he.encode(tripPoint.destination.city)}
+        ${tripPoint.type} ${he.encode(tripPoint.destination.name)}
         </h3>
         <div class="event__schedule">
           <p class="event__time">

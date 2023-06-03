@@ -3,6 +3,7 @@ import PointsListView from '../view/trip-point-list-view.js';
 import NewTripPointPresenter from './new-point-presenter.js';
 import TripPointPresenter from './trip-point-presenter.js';
 import NoPointsView from '../view/no-points-view.js';
+import LoadingView from '../view/loading-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortTime, sortPrice } from '../utils/sorter.js';
@@ -15,10 +16,12 @@ export default class PointsBoardPresenter {
   #sortComponent = null;
   #pointsListComponent = new PointsListView();
   #noPointsComponent = null;
+  #loadingComponent = new LoadingView();
   #currentSortType = SortType.DAY;
   #filterModel = null;
   #filterType = FilterType.EVERYTHING;
   #newTripPointPresenter = null;
+  #isLoading = true;
 
   constructor({ container, tripPointsModel, filterModel, onNewPointDestroy }) {
     this.#container = container;
@@ -61,6 +64,10 @@ export default class PointsBoardPresenter {
   }
 
   #renderPointsBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     const currentFilterPointsAmount = this.#tripPointsModel.tripPoints.length;
     if (currentFilterPointsAmount) {
       this.#renderSortComponent();
@@ -75,6 +82,10 @@ export default class PointsBoardPresenter {
       filterType: this.#filterType,
     });
     render(this.#noPointsComponent, this.#container);
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#container);
   }
 
   #renderTripPoints() {
@@ -117,6 +128,7 @@ export default class PointsBoardPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
+    remove(this.#loadingComponent);
   }
 
   #handleModeChange = () => {
@@ -144,6 +156,11 @@ export default class PointsBoardPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearPointsBoard({ resetSortType: true });
+        this.#renderPointsBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderPointsBoard();
         break;
     }
