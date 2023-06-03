@@ -15,16 +15,16 @@ const createEventTypeListTemplate = (tripPoint) =>
     const checked = eventType === tripPoint.type ? 'checked' : '';
     return `
       <div class="event__type-item">
-        <input id="event-type-${eventType.toLocaleLowerCase()}"
+        <input id="event-type-${eventType}"
         class="event__type-input  visually-hidden"
         type="radio"
         name="event-type"
-        value="${eventType.toLocaleLowerCase()}"
+        value="${eventType}"
         ${checked}>
         <label class="event__type-label
-        event__type-label--${eventType.toLocaleLowerCase()}"
-        for="event-type-${eventType.toLocaleLowerCase()}">
-        ${eventType}
+        event__type-label--${eventType}"
+        for="event-type-${eventType}">
+        ${eventType[0].toUpperCase() + eventType.slice(1)}
         </label>
       </div>
     `;
@@ -225,7 +225,7 @@ export default class PointEditingView extends AbstractStatefulView {
     this.#availableDestinations = availableDestinations;
     this.#availableOffers = availableOffers;
     const availableTypeOffers = this.#availableOffers.find(
-      (offer) => offer.type === this._state.type.toLowerCase()
+      (offer) => offer.type === this._state.type
     ).offers;
     this.#availableTypeOffers = availableTypeOffers;
     this._setState({ availableDestinations, availableTypeOffers });

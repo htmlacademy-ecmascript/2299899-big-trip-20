@@ -37,6 +37,8 @@ export default class TripPointsApiService extends ApiService {
       'base_price': tripPoint.price,
       'is_favorite': tripPoint.isFavorite,
     };
+    adaptedTripPoint.destination = adaptedTripPoint.destination.id;
+    adaptedTripPoint.offers = adaptedTripPoint.offers.map((offer) => offer.id);
     delete adaptedTripPoint.timeStart;
     delete adaptedTripPoint.timeFinish;
     delete adaptedTripPoint.price;

@@ -57,7 +57,8 @@ export default class TripPointsModel extends Observable {
     }
     try {
       const response = await this.#tripPointsAPiService.updateTripPoint(update);
-      const updatedTripPoint = this.#adaptToClient(response);
+      const typeOffers = this.#offers.find((offer) => offer.type === response.type).offers;
+      const updatedTripPoint = this.#adaptToClient(response, this.#destinations, typeOffers);
       this.#tripPoints = [...this.#tripPoints];
       this.#tripPoints[index] = updatedTripPoint;
       this._notify(updateType, updatedTripPoint);
