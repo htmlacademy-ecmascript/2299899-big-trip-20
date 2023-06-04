@@ -6,7 +6,7 @@ import NoPointsView from '../view/no-points-view.js';
 import LoadingView from '../view/loading-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
-import { sortTime, sortPrice } from '../utils/sorter.js';
+import { sortTime, sortPrice, sortDate } from '../utils/sorter.js';
 import { filter } from '../utils/filter.js';
 
 export default class PointsBoardPresenter {
@@ -56,6 +56,8 @@ export default class PointsBoardPresenter {
     const tripPoints = this.#tripPointsModel.tripPoints;
     const filteredTripPoints = filter[this.#filterType](tripPoints);
     switch (this.#currentSortType) {
+      case SortType.DAY:
+        return filteredTripPoints.sort(sortDate);
       case SortType.TIME:
         return filteredTripPoints.sort(sortTime);
       case SortType.PRICE:
