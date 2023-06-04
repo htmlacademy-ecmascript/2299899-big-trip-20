@@ -57,8 +57,7 @@ export default class TripPointsModel extends Observable {
     }
     try {
       const response = await this.#tripPointsAPiService.updateTripPoint(update);
-      const typeOffers = this.#offers.find((offer) => offer.type === response.type).offers;
-      const updatedTripPoint = this.#adaptToClient(response, this.#destinations, typeOffers);
+      const updatedTripPoint = this.#adaptToClient(response, this.#destinations, this.#getTypeOffers(response));
       this.#tripPoints = [...this.#tripPoints];
       this.#tripPoints[index] = updatedTripPoint;
       this._notify(updateType, updatedTripPoint);
@@ -67,20 +66,36 @@ export default class TripPointsModel extends Observable {
     }
   }
 
-  addTripPoint(updateType, update) {
-    this.#tripPoints = [update, ...this.#tripPoints];
-    this._notify(updateType, update);
+  async addTripPoint(updateType, update) {
+    try {
+      const response = await this.#tripPointsAPiService.addTripPoint(update);
+      const newTripPoint = this.#adaptToClient(response, this.#destinations, this.#getTypeOffers(response));
+      this.#tripPoints = [newTripPoint, ...this.#tripPoints];
+      this._notify(updateType, newTripPoint);
+    } catch(err) {
+      throw new Error('Can\'t add trip point');
+    }
   }
 
-  deleteTripPoint(updateType, update) {
+  async deleteTripPoint(updateType, update) {
     const index = this.#tripPoints.findIndex(
       (tripPoint) => tripPoint.id === update.id
     );
     if (index === -1) {
       throw new Error('Can\'t delete unexisting trip point');
     }
-    this.#tripPoints.splice(index, 1);
-    this._notify(updateType);
+    try {
+      await this.#tripPointsAPiService.deleteTripPoint(update);
+      this.#tripPoints.splice(index, 1);
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete trip point');
+    }
+  }
+
+  #getTypeOffers(response) {
+    const typeOffers = this.#offers.find((offer) => offer.type === response.type)?.offers ?? [];
+    return typeOffers;
   }
 
   #adaptToClient(tripPoint, destinations, offers) {

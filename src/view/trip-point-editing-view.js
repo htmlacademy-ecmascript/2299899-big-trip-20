@@ -181,7 +181,7 @@ const createPointEditingTemplate = (tripPoint, action) => {
             <input class="event__input  event__input--price"
             id="event-price"
             type="number"
-            min="0"
+            min="1"
             name="event-price"
             value="${tripPoint.price}">
           </div>
