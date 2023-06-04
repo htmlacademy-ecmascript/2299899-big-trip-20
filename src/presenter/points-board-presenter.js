@@ -95,7 +95,7 @@ export default class PointsBoardPresenter {
       this.#renderLoading();
       return;
     }
-    const currentFilterPointsAmount = this.#tripPointsModel.tripPoints.length;
+    const currentFilterPointsAmount = this.tripPoints.length;
     if (currentFilterPointsAmount) {
       this.#renderSortComponent();
       this.#renderTripPoints();
