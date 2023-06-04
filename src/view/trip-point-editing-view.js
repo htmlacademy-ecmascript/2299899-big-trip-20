@@ -130,7 +130,8 @@ const createPointEditingTemplate = (tripPoint, action) => {
               src="img/icons/${tripPoint.type}.png"
               alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox"
+            ${tripPoint.isDisabled ? 'disabled' : ''}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -151,6 +152,7 @@ const createPointEditingTemplate = (tripPoint, action) => {
             value="${he.encode(tripPoint.destination.name)}"
             list="destination-list"
             required
+            ${tripPoint.isDisabled ? 'disabled' : ''}
             >
             <datalist id="destination-list">
               ${destinationListTemplate}
@@ -163,14 +165,16 @@ const createPointEditingTemplate = (tripPoint, action) => {
             id="event-start-time"
             type="text"
             name="event-start-time"
-            value="${timeStartEncoded}">
+            value="${timeStartEncoded}"
+            ${tripPoint.isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time">To</label>
             <input class="event__input  event__input--time"
             id="event-end-time"
             type="text"
             name="event-end-time"
-            value="${timeFinishEncoded}">
+            value="${timeFinishEncoded}"
+            ${tripPoint.isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -183,11 +187,16 @@ const createPointEditingTemplate = (tripPoint, action) => {
             type="number"
             min="1"
             name="event-price"
-            value="${tripPoint.price}">
+            value="${tripPoint.price}"
+            ${tripPoint.isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${resetButtonName}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${tripPoint.isDisabled ? 'disabled' : ''}>
+          ${tripPoint.isSaving ? 'Saving...' : 'Save'}
+          </button>
+          <button class="event__reset-btn" type="reset" ${tripPoint.isDisabled ? 'disabled' : ''}>
+          ${tripPoint.isDeleting ? 'Deleting...' : resetButtonName}
+          </button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>
@@ -390,13 +399,21 @@ export default class PointEditingView extends AbstractStatefulView {
   }
 
   static parseTripPointToState(tripPoint) {
-    return { ...tripPoint };
+    return {
+      ...tripPoint,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToTripPoint(state) {
     const tripPoint = { ...state };
     delete tripPoint.availableDestinations;
     delete tripPoint.availableTypeOffers;
+    delete tripPoint.isDisabled;
+    delete tripPoint.isSaving;
+    delete tripPoint.isDeleting;
     return tripPoint;
   }
 }

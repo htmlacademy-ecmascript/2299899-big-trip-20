@@ -8,6 +8,12 @@ import { remove, render, RenderPosition } from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortTime, sortPrice, sortDate } from '../utils/sorter.js';
 import { filter } from '../utils/filter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class PointsBoardPresenter {
   #container = null;
@@ -23,6 +29,10 @@ export default class PointsBoardPresenter {
   #newTripPointPresenter = null;
   #isLoading = true;
   #newTripPointButton = document.querySelector('.trip-main__event-add-btn');
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
   constructor({ container, tripPointsModel, filterModel }) {
     this.#container = container;
@@ -48,7 +58,10 @@ export default class PointsBoardPresenter {
       remove(this.#noPointsComponent);
       this.#renderPointsListComponent();
     }
-    this.#newTripPointPresenter.init(this.#tripPointsModel.destinations, this.#tripPointsModel.offers);
+    this.#newTripPointPresenter.init(
+      this.#tripPointsModel.destinations,
+      this.#tripPointsModel.offers
+    );
   }
 
   get tripPoints() {
@@ -182,17 +195,34 @@ export default class PointsBoardPresenter {
     }
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.UPDATE_TRIP_POINT:
-        this.#tripPointsModel.updateTripPoint(updateType, update);
+        this.#tripPointsPresenters.get(update.id).setSaving();
+        try {
+          await this.#tripPointsModel.updateTripPoint(updateType, update);
+        } catch (err) {
+          this.#tripPointsPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_TRIP_POINT:
-        this.#tripPointsModel.addTripPoint(updateType, update);
+        this.#newTripPointPresenter.setSaving();
+        try {
+          await this.#tripPointsModel.addTripPoint(updateType, update);
+        } catch (err) {
+          this.#newTripPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_TRIP_POINT:
-        this.#tripPointsModel.deleteTripPoint(updateType, update);
+        this.#tripPointsPresenters.get(update.id).setDeleting();
+        try {
+          await this.#tripPointsModel.deleteTripPoint(updateType, update);
+        } catch (err) {
+          this.#tripPointsPresenters.get(update.id).setAborting();
+        }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 }

@@ -19,7 +19,13 @@ export default class TripPointPresenter {
   #availableDestinations = [];
   #availableOffers = [];
 
-  constructor({ container, onDataChange, onModeChange, availableDestinations, availableOffers }) {
+  constructor({
+    container,
+    onDataChange,
+    onModeChange,
+    availableDestinations,
+    availableOffers,
+  }) {
     this.#container = container;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
@@ -59,7 +65,8 @@ export default class TripPointPresenter {
       replace(this.#tripPointComponent, prevTripPointComponent);
     }
     if (this.#mode === Mode.EDITING) {
-      replace(this.#tripPointEditComponent, prevTripPointEditComponent);
+      replace(this.#tripPointComponent, prevTripPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
     remove(prevTripPointComponent);
     remove(prevTripPointEditComponent);
@@ -75,6 +82,39 @@ export default class TripPointPresenter {
       this.#tripPointEditComponent.reset(this.#tripPoint);
       this.#replaceFormToPoint();
     }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#tripPointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#tripPointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#tripPointComponent.shake();
+      return;
+    }
+    const resetFormState = () => {
+      this.#tripPointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#tripPointEditComponent.shake(resetFormState);
   }
 
   #escKeyDownHandler = (evt) => {
@@ -109,7 +149,6 @@ export default class TripPointPresenter {
       UpdateType.MINOR,
       update
     );
-    this.#replaceFormToPoint();
   };
 
   #handleDeleteClick = (tripPoint) => {

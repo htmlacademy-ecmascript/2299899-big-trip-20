@@ -43,11 +43,28 @@ export default class NewTripPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#newPointComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAbortint() {
+    const resetFormState = () => {
+      this.#newPointComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#newPointComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (tripPoint) => {
     this.#handleDataChange(UserAction.ADD_TRIP_POINT, UpdateType.MINOR, {
       ...tripPoint,
     });
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
