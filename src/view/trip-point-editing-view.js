@@ -284,6 +284,7 @@ export default class PointEditingView extends AbstractStatefulView {
     const availableTypeOffers = this.#availableOffers.find(
       (offer) => offer.type === this._state.type.toLowerCase()
     ).offers;
+    this.#availableTypeOffers = availableTypeOffers;
     this._setState({ availableTypeOffers });
     return availableTypeOffers;
   }
@@ -325,11 +326,10 @@ export default class PointEditingView extends AbstractStatefulView {
     evt.preventDefault();
     const offerId = evt.target.value;
     const isChecked = evt.target.checked;
-    const offers = this._state.offers;
+    const offers = [...this._state.offers];
     if (isChecked) {
-      offers.push(
-        this.#availableTypeOffers.find((offer) => offer.id === offerId)
-      );
+      const foundOffer = this.#availableTypeOffers.find((offer) => offer.id === offerId);
+      offers.push(foundOffer);
     } else {
       const element = offers.find((offer) => offer.id === offerId);
       const index = offers.indexOf(element);
