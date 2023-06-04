@@ -307,16 +307,18 @@ export default class PointEditingView extends AbstractStatefulView {
   };
 
   #chooseTripPointTypeHandler = (evt) => {
-    evt.preventDefault();
-    const eventType = evt.target.innerText;
-    const offers = [];
-    this._setState({ type: eventType });
-    const availableTypeOffers = this.#updateAvailableTypeOffers();
-    this.updateElement({
-      type: eventType,
-      offers,
-      availableTypeOffers,
-    });
+    if (evt.target.closest('.event__type-label')) {
+      evt.preventDefault();
+      const eventType = evt.target.innerText;
+      const offers = [];
+      this._setState({ type: eventType });
+      const availableTypeOffers = this.#updateAvailableTypeOffers();
+      this.updateElement({
+        type: eventType,
+        offers,
+        availableTypeOffers,
+      });
+    }
   };
 
   #chooseOfferHandler = (evt) => {
