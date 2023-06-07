@@ -337,10 +337,10 @@ export default class PointEditingView extends AbstractStatefulView {
     const isChecked = evt.target.checked;
     const offers = [...this._state.offers];
     if (isChecked) {
-      const foundOffer = this.#availableTypeOffers.find((offer) => offer.id === offerId);
+      const foundOffer = this.#availableTypeOffers.find((offer) => String(offer.id) === offerId);
       offers.push(foundOffer);
     } else {
-      const element = offers.find((offer) => offer.id === offerId);
+      const element = offers.find((offer) => String(offer.id) === offerId);
       const index = offers.indexOf(element);
       offers.splice(index, 1);
     }
