@@ -1,5 +1,6 @@
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const.js';
+import { sortDate } from '../utils/sorter.js';
 
 export default class TripPointsModel extends Observable {
   #tripPointsAPiService = null;
@@ -22,6 +23,29 @@ export default class TripPointsModel extends Observable {
 
   get offers() {
     return this.#offers;
+  }
+
+  get tripRoute() {
+    return this.#tripPoints.map((tripPoint) => tripPoint.destination.name);
+  }
+
+  get tripDates() {
+    return this.#tripPoints.map((tripPoint) => tripPoint.timeStart);
+  }
+
+  get tripTotalPrice() {
+    return this.#tripPoints
+      .map((tripPoint) => {
+        const offersPrice = tripPoint.offers.reduce(
+          (accumulator, offer) => accumulator + offer.price,
+          0
+        );
+        return tripPoint.price + offersPrice;
+      })
+      .reduce(
+        (accumulator, tripPointSumPrice) => accumulator + tripPointSumPrice,
+        0
+      );
   }
 
   async init() {
@@ -57,7 +81,11 @@ export default class TripPointsModel extends Observable {
     }
     try {
       const response = await this.#tripPointsAPiService.updateTripPoint(update);
-      const updatedTripPoint = this.#adaptToClient(response, this.#destinations, this.#getTypeOffers(response));
+      const updatedTripPoint = this.#adaptToClient(
+        response,
+        this.#destinations,
+        this.#getTypeOffers(response)
+      );
       this.#tripPoints = [...this.#tripPoints];
       this.#tripPoints[index] = updatedTripPoint;
       this._notify(updateType, updatedTripPoint);
@@ -69,10 +97,15 @@ export default class TripPointsModel extends Observable {
   async addTripPoint(updateType, update) {
     try {
       const response = await this.#tripPointsAPiService.addTripPoint(update);
-      const newTripPoint = this.#adaptToClient(response, this.#destinations, this.#getTypeOffers(response));
+      const newTripPoint = this.#adaptToClient(
+        response,
+        this.#destinations,
+        this.#getTypeOffers(response)
+      );
       this.#tripPoints = [newTripPoint, ...this.#tripPoints];
+      this.#tripPoints.sort(sortDate).reverse();
       this._notify(updateType, newTripPoint);
-    } catch(err) {
+    } catch (err) {
       throw new Error('Can\'t add trip point');
     }
   }
@@ -88,13 +121,14 @@ export default class TripPointsModel extends Observable {
       await this.#tripPointsAPiService.deleteTripPoint(update);
       this.#tripPoints.splice(index, 1);
       this._notify(updateType);
-    } catch(err) {
+    } catch (err) {
       throw new Error('Can\'t delete trip point');
     }
   }
 
   #getTypeOffers(response) {
-    const typeOffers = this.#offers.find((offer) => offer.type === response.type)?.offers ?? [];
+    const typeOffers =
+      this.#offers.find((offer) => offer.type === response.type)?.offers ?? [];
     return typeOffers;
   }
 
