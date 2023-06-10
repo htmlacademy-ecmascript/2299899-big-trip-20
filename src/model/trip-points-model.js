@@ -103,7 +103,7 @@ export default class TripPointsModel extends Observable {
         this.#getTypeOffers(response)
       );
       this.#tripPoints = [newTripPoint, ...this.#tripPoints];
-      this.#tripPoints.sort(sortDate).reverse();
+      this.#tripPoints.sort(sortDate);
       this._notify(updateType, newTripPoint);
     } catch (err) {
       throw new Error('Can\'t add trip point');
