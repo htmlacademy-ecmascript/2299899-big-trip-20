@@ -24,7 +24,7 @@ const createEventTypeListTemplate = (tripPoint) =>
         <label class="event__type-label
         event__type-label--${eventType}"
         for="event-type-${eventType}">
-        ${eventType[0].toUpperCase() + eventType.slice(1)}
+        ${eventType[0].toUpperCase()}${eventType.slice(1)}
         </label>
       </div>
     `;
