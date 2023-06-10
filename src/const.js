@@ -12,6 +12,7 @@ const TRIP_POINTS_TYPES = [
   'restaurant',
 ];
 const DATE_FORMAT = 'MMM D';
+const INFO_DATE_FORMAT = 'D MMM';
 const TIME_FORMAT = 'HH:mm';
 const TIME_DELTA_FORMAT = 'DD[D] HH[H] mm[M]';
 const DATETIME_FORM_FORMAT = 'DD/MM/YY HH:mm';
@@ -68,6 +69,7 @@ const BLANK_TRIP_POINT = {
 export {
   TRIP_POINTS_TYPES,
   DATE_FORMAT,
+  INFO_DATE_FORMAT,
   TIME_FORMAT,
   TIME_DELTA_FORMAT,
   DATETIME_FORM_FORMAT,
