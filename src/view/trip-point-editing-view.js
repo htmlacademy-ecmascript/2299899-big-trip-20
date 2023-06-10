@@ -1,5 +1,5 @@
 import {
-  DATETIME_FORM_FORMAT,
+  DateTimeFormat,
   TRIP_POINTS_TYPES,
   UserAction,
 } from '../const.js';
@@ -104,10 +104,10 @@ const createPointEditingTemplate = (tripPoint, action) => {
   const resetButtonName =
     action === UserAction.UPDATE_TRIP_POINT ? 'Delete' : 'Cancel';
   const timeStartEncoded = he.encode(
-    humanizeDate(tripPoint.timeStart, DATETIME_FORM_FORMAT)
+    humanizeDate(tripPoint.timeStart, DateTimeFormat.FORM_DATE_TIME)
   );
   const timeFinishEncoded = he.encode(
-    humanizeDate(tripPoint.timeFinish, DATETIME_FORM_FORMAT)
+    humanizeDate(tripPoint.timeFinish, DateTimeFormat.FORM_DATE_TIME)
   );
   const eventTypeListTemplate = createEventTypeListTemplate(tripPoint);
   const destinationListTemplate = createDestinationListTemplate(tripPoint);

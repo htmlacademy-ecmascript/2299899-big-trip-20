@@ -11,11 +11,14 @@ const TRIP_POINTS_TYPES = [
   'sightseeing',
   'restaurant',
 ];
-const DATE_FORMAT = 'MMM D';
-const INFO_DATE_FORMAT = 'D MMM';
-const TIME_FORMAT = 'HH:mm';
-const TIME_DELTA_FORMAT = 'DD[D] HH[H] mm[M]';
-const DATETIME_FORM_FORMAT = 'DD/MM/YY HH:mm';
+
+const DateTimeFormat = {
+  INFO_DATE: 'D MMM',
+  POINT_DATE: 'MMM D',
+  POINT_TIME: 'HH:mm',
+  POINT_TIME_DELTA: 'DD[D] HH[H] mm[M]',
+  FORM_DATE_TIME: 'DD/MM/YY HH:mm',
+};
 
 const FilterType = {
   EVERYTHING: 'everything',
@@ -68,11 +71,7 @@ const BLANK_TRIP_POINT = {
 
 export {
   TRIP_POINTS_TYPES,
-  DATE_FORMAT,
-  INFO_DATE_FORMAT,
-  TIME_FORMAT,
-  TIME_DELTA_FORMAT,
-  DATETIME_FORM_FORMAT,
+  DateTimeFormat,
   FilterType,
   SortType,
   FilterTypeMessages,

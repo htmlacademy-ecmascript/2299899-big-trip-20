@@ -1,4 +1,4 @@
-import { INFO_DATE_FORMAT } from '../const.js';
+import { DateTimeFormat } from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate } from '../utils/common.js';
 
@@ -19,7 +19,11 @@ const formatTripRoute = (tripRoute) => {
 
 const createTripInfoRemplate = (tripRoute, tripDates, tripTotalPrice) => {
   const route = formatTripRoute(tripRoute);
-  const dates = tripDates.length > 1 ? `${humanizeDate(tripDates.at(0), INFO_DATE_FORMAT)}&nbsp;—&nbsp;${humanizeDate(tripDates.at(-1), INFO_DATE_FORMAT)}` : '';
+  const dates = tripDates.length > 1 ? `
+    ${humanizeDate(tripDates.at(0), DateTimeFormat.INFO_DATE)}
+    &nbsp;—&nbsp;
+    ${humanizeDate(tripDates.at(-1), DateTimeFormat.INFO_DATE)}
+  ` : '';
   return `
     <section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
