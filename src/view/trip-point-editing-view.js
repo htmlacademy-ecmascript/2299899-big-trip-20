@@ -115,7 +115,7 @@ const createPointEditingTemplate = (tripPoint, action) => {
     tripPoint.availableTypeOffers.length !== 0
       ? createOffersTemplate(tripPoint)
       : '';
-  const destinationTemplate = tripPoint.destination.name
+  const destinationTemplate = tripPoint.destination.name && (tripPoint.destination.description || tripPoint.destination.pictures.length !== 0)
     ? createDestinationTemplate(tripPoint)
     : '';
   return `
