@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
 const sortDate = (tripPointA, tripPointB) =>
-  dayjs(tripPointB.timeStart).diff(dayjs(tripPointA.timeStart));
+  dayjs(tripPointA.timeStart).diff(dayjs(tripPointB.timeStart));
 
 const sortTime = (tripPointA, tripPointB) => {
   const deltaA = dayjs(tripPointA.timeFinish).diff(dayjs(tripPointA.timeStart));

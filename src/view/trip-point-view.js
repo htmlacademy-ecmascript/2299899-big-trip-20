@@ -2,7 +2,7 @@ import he from 'he';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { humanizeDate } from '../utils/common.js';
-import { DATE_FORMAT, TIME_FORMAT, TIME_DELTA_FORMAT } from '../const.js';
+import { DateTimeFormat } from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 dayjs.extend(duration);
@@ -11,7 +11,7 @@ const getTimeDelta = (tripPoint) => {
   const timeDuration = dayjs.duration(
     dayjs(tripPoint.timeFinish).diff(tripPoint.timeStart)
   );
-  let timeDelta = timeDuration.format(TIME_DELTA_FORMAT);
+  let timeDelta = timeDuration.format(DateTimeFormat.POINT_TIME_DELTA);
   for (let i = 1; i < 3; i++) {
     if (timeDelta.slice(0, 2) === '00') {
       timeDelta = timeDelta.slice(4);
@@ -43,7 +43,7 @@ const createPointElementTemplate = (tripPoint) => {
     <li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="${tripPoint.timeStart}">
-        ${humanizeDate(tripPoint.timeStart, DATE_FORMAT)}
+        ${humanizeDate(tripPoint.timeStart, DateTimeFormat.POINT_DATE)}
         </time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42"
@@ -56,11 +56,11 @@ const createPointElementTemplate = (tripPoint) => {
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${tripPoint.timeStart}">
-            ${humanizeDate(tripPoint.timeStart, TIME_FORMAT)}
+            ${humanizeDate(tripPoint.timeStart, DateTimeFormat.POINT_TIME)}
             </time>
             &mdash;
             <time class="event__end-time" datetime="${tripPoint.timeFinish}">
-            ${humanizeDate(tripPoint.timeFinish, TIME_FORMAT)}
+            ${humanizeDate(tripPoint.timeFinish, DateTimeFormat.POINT_TIME)}
             </time>
           </p>
           <p class="event__duration">

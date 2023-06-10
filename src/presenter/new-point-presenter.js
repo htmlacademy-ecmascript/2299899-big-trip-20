@@ -22,6 +22,7 @@ export default class NewTripPointPresenter {
       action: UserAction.ADD_TRIP_POINT,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
+      onFormClose: this.#handleDeleteClick,
       availableDestinations,
       availableOffers,
     });

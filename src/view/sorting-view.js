@@ -16,7 +16,7 @@ const createSortItem = (sortType, isChecked) => `
       for="sort-${sortType}"
       data-sort-type="${sortType}"
     >
-      ${sortType.charAt(0).toUpperCase() + sortType.slice(1)}
+      ${sortType.charAt(0).toUpperCase()}${sortType.slice(1)}
     </label>
   </div>
 `;

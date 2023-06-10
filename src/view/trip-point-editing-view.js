@@ -1,5 +1,5 @@
 import {
-  DATETIME_FORM_FORMAT,
+  DateTimeFormat,
   TRIP_POINTS_TYPES,
   UserAction,
 } from '../const.js';
@@ -24,7 +24,7 @@ const createEventTypeListTemplate = (tripPoint) =>
         <label class="event__type-label
         event__type-label--${eventType}"
         for="event-type-${eventType}">
-        ${eventType[0].toUpperCase() + eventType.slice(1)}
+        ${eventType[0].toUpperCase()}${eventType.slice(1)}
         </label>
       </div>
     `;
@@ -104,10 +104,10 @@ const createPointEditingTemplate = (tripPoint, action) => {
   const resetButtonName =
     action === UserAction.UPDATE_TRIP_POINT ? 'Delete' : 'Cancel';
   const timeStartEncoded = he.encode(
-    humanizeDate(tripPoint.timeStart, DATETIME_FORM_FORMAT)
+    humanizeDate(tripPoint.timeStart, DateTimeFormat.FORM_DATE_TIME)
   );
   const timeFinishEncoded = he.encode(
-    humanizeDate(tripPoint.timeFinish, DATETIME_FORM_FORMAT)
+    humanizeDate(tripPoint.timeFinish, DateTimeFormat.FORM_DATE_TIME)
   );
   const eventTypeListTemplate = createEventTypeListTemplate(tripPoint);
   const destinationListTemplate = createDestinationListTemplate(tripPoint);
@@ -115,7 +115,7 @@ const createPointEditingTemplate = (tripPoint, action) => {
     tripPoint.availableTypeOffers.length !== 0
       ? createOffersTemplate(tripPoint)
       : '';
-  const destinationTemplate = tripPoint.destination.name
+  const destinationTemplate = tripPoint.destination.name && (tripPoint.destination.description || tripPoint.destination.pictures.length !== 0)
     ? createDestinationTemplate(tripPoint)
     : '';
   return `
@@ -337,10 +337,10 @@ export default class PointEditingView extends AbstractStatefulView {
     const isChecked = evt.target.checked;
     const offers = [...this._state.offers];
     if (isChecked) {
-      const foundOffer = this.#availableTypeOffers.find((offer) => String(offer.id) === offerId);
+      const foundOffer = this.#availableTypeOffers.find((offer) => offer.id === offerId);
       offers.push(foundOffer);
     } else {
-      const element = offers.find((offer) => String(offer.id) === offerId);
+      const element = offers.find((offer) => offer.id === offerId);
       const index = offers.indexOf(element);
       offers.splice(index, 1);
     }
@@ -354,7 +354,10 @@ export default class PointEditingView extends AbstractStatefulView {
       (destination) => destination.name === inputCity
     );
     if (updatedDestination) {
+      evt.target.setCustomValidity('');
       this.updateElement({ destination: updatedDestination });
+    } else {
+      evt.target.setCustomValidity('Сity must be on the list');
     }
   };
 
@@ -378,7 +381,9 @@ export default class PointEditingView extends AbstractStatefulView {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
           defaultDate: this._state.timeStart,
-          onChange: this.#timeStartChangeHandler,
+          onClose: this.#timeStartChangeHandler,
+          maxDate: this._state.timeFinish,
+          minuteIncrement: 1,
         }
       );
     }
@@ -392,7 +397,9 @@ export default class PointEditingView extends AbstractStatefulView {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
           defaultDate: this._state.timeFinish,
-          onChange: this.#timeFinishChangeHandler,
+          onClose: this.#timeFinishChangeHandler,
+          minDate: this._state.timeStart,
+          minuteIncrement: 1,
         }
       );
     }
