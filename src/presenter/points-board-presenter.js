@@ -52,20 +52,6 @@ export default class PointsBoardPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-  createTripPoint() {
-    this.#newTripPointButton.disabled = true;
-    this.#currentSortType = SortType.DAY;
-    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    if (this.#tripPointsModel.tripPoints.length === 0) {
-      remove(this.#noPointsComponent);
-      this.#renderPointsListComponent();
-    }
-    this.#newTripPointPresenter.init(
-      this.#tripPointsModel.destinations,
-      this.#tripPointsModel.offers
-    );
-  }
-
   get tripPoints() {
     this.#filterType = this.#filterModel.filter;
     const tripPoints = this.#tripPointsModel.tripPoints;
@@ -85,11 +71,18 @@ export default class PointsBoardPresenter {
     this.#renderPointsBoard();
   }
 
-  #handleNewPointFormClose() {
-    this.#newTripPointButton.disabled = false;
+  createTripPoint() {
+    this.#newTripPointButton.disabled = true;
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     if (this.#tripPointsModel.tripPoints.length === 0) {
-      this.init();
+      remove(this.#noPointsComponent);
+      this.#renderPointsListComponent();
     }
+    this.#newTripPointPresenter.init(
+      this.#tripPointsModel.destinations,
+      this.#tripPointsModel.offers
+    );
   }
 
   #renderPointsBoard() {
@@ -165,6 +158,13 @@ export default class PointsBoardPresenter {
       this.#currentSortType = SortType.DAY;
     }
     remove(this.#loadingComponent);
+  }
+
+  #handleNewPointFormClose() {
+    this.#newTripPointButton.disabled = false;
+    if (this.#tripPointsModel.tripPoints.length === 0) {
+      this.init();
+    }
   }
 
   #handleModeChange = () => {
