@@ -7,6 +7,7 @@ export default class TripPointsModel extends Observable {
   #tripPoints = [];
   #destinations = [];
   #offers = [];
+  #isServerUnavailable = false;
 
   constructor({ tripPointsApiService }) {
     super();
@@ -68,8 +69,11 @@ export default class TripPointsModel extends Observable {
       this.#tripPoints = [];
       this.#destinations = [];
       this.#offers = [];
+      this.#isServerUnavailable = true;
     }
-    this._notify(UpdateType.INIT);
+    this._notify(UpdateType.INIT, {
+      isServerUnavailable: this.#isServerUnavailable,
+    });
   }
 
   async updateTripPoint(updateType, update) {
