@@ -354,7 +354,10 @@ export default class PointEditingView extends AbstractStatefulView {
       (destination) => destination.name === inputCity
     );
     if (updatedDestination) {
+      evt.target.setCustomValidity('');
       this.updateElement({ destination: updatedDestination });
+    } else {
+      evt.target.setCustomValidity('Сity must be on the list');
     }
   };
 
