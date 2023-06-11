@@ -88,7 +88,7 @@ const createPointElementTemplate = (tripPoint) => {
   `;
 };
 
-export default class PointElementView extends AbstractView {
+export default class TripPointView extends AbstractView {
   #tripPoint = null;
   #handleEditClick = null;
   #handleFavoriteClick = null;

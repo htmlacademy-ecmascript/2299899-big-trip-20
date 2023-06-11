@@ -1,6 +1,6 @@
-import SortView from '../view/sorting-view.js';
-import PointsListView from '../view/trip-point-list-view.js';
-import NewTripPointPresenter from './new-point-presenter.js';
+import SortingView from '../view/sorting-view.js';
+import TripPointsListView from '../view/trip-points-list-view.js';
+import NewPointPresenter from './new-point-presenter.js';
 import TripPointPresenter from './trip-point-presenter.js';
 import NoPointsView from '../view/no-points-view.js';
 import LoadingView from '../view/loading-view.js';
@@ -9,7 +9,7 @@ import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortTime, sortPrice, sortDate } from '../utils/sorter.js';
 import { filter } from '../utils/filter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
-import ServerUnavalableView from '../view/server-unavailable-view.js';
+import ServerUnavailableView from '../view/server-unavailable-view.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -21,14 +21,14 @@ export default class PointsBoardPresenter {
   #tripPointsModel = null;
   #tripPointsPresenters = new Map();
   #sortComponent = null;
-  #pointsListComponent = new PointsListView();
+  #pointsListComponent = new TripPointsListView();
   #noPointsComponent = null;
   #loadingComponent = new LoadingView();
-  #serverUnavailableComponent = new ServerUnavalableView();
+  #serverUnavailableComponent = new ServerUnavailableView();
   #currentSortType = SortType.DAY;
   #filterModel = null;
   #filterType = FilterType.EVERYTHING;
-  #newTripPointPresenter = null;
+  #newPointPresenter = null;
   #isLoading = true;
   #newTripPointButton = document.querySelector('.trip-main__event-add-btn');
   #uiBlocker = new UiBlocker({
@@ -43,7 +43,7 @@ export default class PointsBoardPresenter {
     this.#newTripPointButton.addEventListener('click', () =>
       this.createTripPoint()
     );
-    this.#newTripPointPresenter = new NewTripPointPresenter({
+    this.#newPointPresenter = new NewPointPresenter({
       container: this.#pointsListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: () => this.#handleNewPointFormClose(),
@@ -79,7 +79,7 @@ export default class PointsBoardPresenter {
       remove(this.#noPointsComponent);
       this.#renderPointsListComponent();
     }
-    this.#newTripPointPresenter.init(
+    this.#newPointPresenter.init(
       this.#tripPointsModel.destinations,
       this.#tripPointsModel.offers
     );
@@ -136,7 +136,7 @@ export default class PointsBoardPresenter {
   }
 
   #renderSortComponent() {
-    this.#sortComponent = new SortView({
+    this.#sortComponent = new SortingView({
       sortTypes: SortType,
       onSortTypeChange: this.#handleSortTypeChange,
       currentSorter: this.#currentSortType,
@@ -149,7 +149,7 @@ export default class PointsBoardPresenter {
   }
 
   #clearPointsBoard({ resetSortType = false } = {}) {
-    this.#newTripPointPresenter.destroy();
+    this.#newPointPresenter.destroy();
     this.#tripPointsPresenters.forEach((presenter) => presenter.destroy());
     this.#tripPointsPresenters.clear();
     remove(this.#sortComponent);
@@ -168,7 +168,7 @@ export default class PointsBoardPresenter {
   }
 
   #handleModeChange = () => {
-    this.#newTripPointPresenter.destroy();
+    this.#newPointPresenter.destroy();
     this.#tripPointsPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -220,11 +220,11 @@ export default class PointsBoardPresenter {
         }
         break;
       case UserAction.ADD_TRIP_POINT:
-        this.#newTripPointPresenter.setSaving();
+        this.#newPointPresenter.setSaving();
         try {
           await this.#tripPointsModel.addTripPoint(updateType, update);
         } catch (err) {
-          this.#newTripPointPresenter.setAborting();
+          this.#newPointPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_TRIP_POINT:
