@@ -210,7 +210,7 @@ const createPointEditingTemplate = (tripPoint, action) => {
   `;
 };
 
-export default class PointEditingView extends AbstractStatefulView {
+export default class TripPointEditingView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleDeleteClick = null;
   #handleFormClose = null;
@@ -230,7 +230,7 @@ export default class PointEditingView extends AbstractStatefulView {
     onFormClose,
   }) {
     super();
-    this._setState(PointEditingView.parseTripPointToState(tripPoint));
+    this._setState(TripPointEditingView.parseTripPointToState(tripPoint));
     this.#availableDestinations = availableDestinations;
     this.#availableOffers = availableOffers;
     const availableTypeOffers = this.#availableOffers.find(
@@ -258,7 +258,7 @@ export default class PointEditingView extends AbstractStatefulView {
   }
 
   reset(tripPoint) {
-    this.updateElement(PointEditingView.parseTripPointToState(tripPoint));
+    this.updateElement(TripPointEditingView.parseTripPointToState(tripPoint));
   }
 
   _restoreHandlers() {
@@ -300,13 +300,13 @@ export default class PointEditingView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(PointEditingView.parseStateToTripPoint(this._state));
+    this.#handleFormSubmit(TripPointEditingView.parseStateToTripPoint(this._state));
   };
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleDeleteClick(
-      PointEditingView.parseStateToTripPoint(this._state)
+      TripPointEditingView.parseStateToTripPoint(this._state)
     );
   };
 

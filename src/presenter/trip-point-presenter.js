@@ -1,6 +1,6 @@
 import { render, replace, remove } from '../framework/render.js';
-import PointEditingView from '../view/trip-point-editing-view.js';
-import PointElementView from '../view/trip-point-view.js';
+import TripPointEditingView from '../view/trip-point-editing-view.js';
+import TripPointView from '../view/trip-point-view.js';
 import { UserAction, UpdateType } from '../const.js';
 
 const Mode = {
@@ -38,12 +38,12 @@ export default class TripPointPresenter {
     const prevTripPointComponent = this.#tripPointComponent;
     const prevTripPointEditComponent = this.#tripPointEditComponent;
 
-    this.#tripPointComponent = new PointElementView({
+    this.#tripPointComponent = new TripPointView({
       tripPoint: this.#tripPoint,
       onEditClick: this.#handleEditClick,
       onFavoriteClick: this.#handleFavoriteClick,
     });
-    this.#tripPointEditComponent = new PointEditingView({
+    this.#tripPointEditComponent = new TripPointEditingView({
       tripPoint: this.#tripPoint,
       availableDestinations: this.#availableDestinations,
       availableOffers: this.#availableOffers,

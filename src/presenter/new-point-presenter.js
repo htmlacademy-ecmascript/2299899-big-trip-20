@@ -1,8 +1,8 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
 import { UserAction, UpdateType } from '../const.js';
-import PointEditingView from '../view/trip-point-editing-view.js';
+import TripPointEditingView from '../view/trip-point-editing-view.js';
 
-export default class NewTripPointPresenter {
+export default class NewPointPresenter {
   #tripPointsContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
@@ -18,7 +18,7 @@ export default class NewTripPointPresenter {
     if (this.#newPointComponent !== null) {
       return;
     }
-    this.#newPointComponent = new PointEditingView({
+    this.#newPointComponent = new TripPointEditingView({
       action: UserAction.ADD_TRIP_POINT,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,

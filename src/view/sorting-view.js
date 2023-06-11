@@ -32,7 +32,7 @@ const createSortTemplate = (sortTypes, currentSorter) => {
   `;
 };
 
-export default class SortView extends AbstractView {
+export default class SortingView extends AbstractView {
   #sortTypes = null;
   #handleSortTypeChange = null;
   #currentSorter = 'day';
